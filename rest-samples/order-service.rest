@@ -1,0 +1,27 @@
+@order-service = order-service.<YOUR-CAPPS-ENV>.canadacentral.azurecontainerapps.io
+@storeId = Redmond
+@pubsubName="reddog.pubsub"
+
+### Create an order via order-service POST
+POST https://{{order-service}}/order
+Content-Type: application/json
+ 
+{
+    "storeId": "{{storeId}}",
+    "customerName": "John 'Hannibal' Smith",
+    "loyaltyId": "42",
+    "orderItems": [
+        {
+            "menuItemId": 1,
+            "quantity": 1
+        },
+        {
+            "menuItemId": 2,
+            "quantity": 1
+        },
+        {
+            "menuItemId": 3,
+            "quantity": 3
+        }
+    ]
+}
