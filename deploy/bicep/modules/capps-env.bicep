@@ -1,12 +1,11 @@
-param cappsEnvName string = 'cappsenv-reddog'
-param logAnalyticsWorkspaceName string = 'logs-${cappsEnvName}'
-param appInsightsName string = 'appins-${cappsEnvName}'
-param location string = 'canadacentral'
-param logLocation string = 'Canada Central'
+param containerAppsEnvName string
+param logAnalyticsWorkspaceName string
+param appInsightsName string
+param location string
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
   name: logAnalyticsWorkspaceName
-  location: logLocation
+  location: location
   properties: any({
     retentionInDays: 30
     features: {
@@ -18,19 +17,17 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
   })
 }
 
-resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: appInsightsName
-  location: logLocation
+  location: location
   kind: 'web'
   properties: { 
     Application_Type: 'web'
-    Flow_Type: 'Redfield'
-    Request_Source: 'CustomDeployment'
   }
 }
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
-  name: cappsEnvName
+resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
+  name: containerAppsEnvName
   location: location
   kind: 'containerenvironment'
   properties: {
@@ -46,4 +43,4 @@ resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
   }
 }
 
-output cappsEnvId string = cappsEnv.id
+output cappsEnvId string = containerAppsEnv.id

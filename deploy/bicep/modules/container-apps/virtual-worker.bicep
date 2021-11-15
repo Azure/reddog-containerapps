@@ -1,11 +1,11 @@
-param cappsEnvName string = 'cappsenv-reddog'
-param location string = 'canadacentral'
+param containerAppsEnvName string
+param location string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
-  name: cappsEnvName
+  name: containerAppsEnvName
 }
 
-resource loyalty_service 'Microsoft.Web/containerApps@2021-03-01' = {
+resource virtualWorker 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'virtual-worker'
   location: location
   properties: {
@@ -41,7 +41,7 @@ resource loyalty_service 'Microsoft.Web/containerApps@2021-03-01' = {
     }
     configuration: {
       ingress: {
-        external: true
+        external: false
         targetPort: 80
       }
     }

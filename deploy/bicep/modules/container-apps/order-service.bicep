@@ -1,11 +1,12 @@
-param cappsEnvName string = 'cappsenv-reddog'
-param location string = 'canadacentral'
+param containerAppsEnvName string
+param location string
+param sbRootConnectionString string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
-  name: cappsEnvName
+  name: containerAppsEnvName
 }
 
-resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
+resource orderService 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'order-service'
   location: location
   properties: {
@@ -18,7 +19,7 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       scale: {
-        minReplicas: 1
+        minReplicas: 0
       }
       dapr: {
         enabled: true
@@ -41,13 +42,13 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
     }
     configuration: {
       ingress: {
-        external: true
+        external: false
         targetPort: 80
       }
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: ''
+          value: sbRootConnectionString
         }
       ]
     }

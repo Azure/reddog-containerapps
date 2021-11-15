@@ -1,0 +1,18 @@
+http:
+  services:
+    make-line-service:
+      loadBalancer:
+        passHostHeader: false
+        servers:
+          - url: "https://make-line-service.internal.{{ env CONTAINER_APP_ENV_DNS_SUFFIX }}"
+  middlewares:
+    rewrite-makeline-path:
+      replacePathRegex:
+        regex: "^/makeline(/|$)(.*)"
+        replacement: "/$2"
+  routers:
+    makeline:
+      rule: "PathPrefix(`/makeline`)"
+      middlewares:
+        - "rewrite-makeline-path"
+      service: make-line-service

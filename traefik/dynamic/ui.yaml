@@ -1,0 +1,12 @@
+http:
+  services:
+    ui:
+      loadBalancer:
+        passHostHeader: false
+        servers:
+          - url: "https://ui.internal.{{ env CONTAINER_APP_ENV_DNS_SUFFIX }}"
+  routers:
+    default:
+      rule: "PathPrefix(`/`)"
+      service: ui
+      priority: 1
