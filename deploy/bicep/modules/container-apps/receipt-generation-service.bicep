@@ -1,11 +1,14 @@
-param cappsEnvName string = 'cappsenv-reddog'
-param location string = 'canadacentral'
+param containerAppsEnvName string
+param location string
+param sbRootConnectionString string
+param storageAccountName string
+param blobStorageKey string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
-  name: cappsEnvName
+  name: containerAppsEnvName
 }
 
-resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
+resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'receipt-generation-service'
   location: location
   properties: {
@@ -18,7 +21,26 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       scale: {
-        minReplicas: 1
+        minReplicas: 0
+        rules: [
+          {
+            name: 'service-bus-scale-rule'
+            custom: {
+              type: 'azure-servicebus'
+              metadata: {
+                topicName: 'orders'
+                subscriptionName: 'receipt-generation-service'
+                messageCount: '10'
+              }
+              auth: [
+                {
+                  secretRef: 'sb-root-connectionstring'
+                  triggerParameter: 'connection'
+                }
+              ]
+            }
+          }
+        ]
       }
       dapr: {
         enabled: true
@@ -43,7 +65,7 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
             metadata: [
               {
                 name: 'storageAccount'
-                value: 'vigilantesblobstorage'
+                value: storageAccountName
               }
               {
                 name: 'container'
@@ -60,17 +82,17 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
     }
     configuration: {
       ingress: {
-        external: true
+        external: false
         targetPort: 80
       }
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: ''
+          value: sbRootConnectionString
         }
         {
           name: 'blob-storage-key'
-          value: ''
+          value: blobStorageKey
         }
       ]
     }

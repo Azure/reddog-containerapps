@@ -1,10 +1,16 @@
-param cappsEnvName string = 'cappsenv-reddog'
-param location string = 'canadacentral'
+param containerAppsEnvName string
+param location string
+param sbRootConnectionString string
+param cosmosUrl string
+param cosmosDatabaseName string
+param cosmosCollectionName string
+param cosmosPrimaryKey string
+
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
-  name: cappsEnvName
+  name: containerAppsEnvName
 }
 
-resource loyalty_service 'Microsoft.Web/containerApps@2021-03-01' = {
+resource loyaltyService 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'loyalty-service'
   location: location
   properties: {
@@ -17,7 +23,26 @@ resource loyalty_service 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       scale: {
-        minReplicas: 1
+        minReplicas: 0
+        rules: [
+          {
+            name: 'service-bus-scale-rule'
+            custom: {
+              type: 'azure-servicebus'
+              metadata: {
+                topicName: 'orders'
+                subscriptionName: 'loyalty-service'
+                messageCount: '10'
+              }
+              auth: [
+                {
+                  secretRef: 'sb-root-connectionstring'
+                  triggerParameter: 'connection'
+                }
+              ]
+            }
+          }
+        ]
       }
       dapr: {
         enabled: true
@@ -42,15 +67,18 @@ resource loyalty_service 'Microsoft.Web/containerApps@2021-03-01' = {
             metadata: [
               {
                 name: 'url'
-                value: 'https://vigilantescosmosdb.documents.azure.com:443/'
+                // value: 'https://vigilantescosmosdb.documents.azure.com:443/'
+                value: cosmosUrl
               }
               {
                 name: 'database'
-                value: 'daprworkshop'
+                // value: 'daprworkshop'
+                value: cosmosDatabaseName
               }
               {
                 name: 'collection'
-                value: 'loyalty'
+                // value: 'loyalty'
+                value: cosmosCollectionName
               }
               {
                 name: 'masterKey'
@@ -63,17 +91,17 @@ resource loyalty_service 'Microsoft.Web/containerApps@2021-03-01' = {
     }
     configuration: {
       ingress: {
-        external: true
+        external: false
         targetPort: 80
       }
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: ''
+          value: sbRootConnectionString
         }
         {
           name: 'cosmos-primary-rw-key'
-          value: ''
+          value: cosmosPrimaryKey
         }
       ]
     }

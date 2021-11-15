@@ -1,11 +1,15 @@
-param cappsEnvName string = 'cappsenv-reddog'
-param location string = 'canadacentral'
+param containerAppsEnvName string
+param location string
+param sbRootConnectionString string
+param redisHost string
+param redisSslPort int
+param redisPassword string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
-  name: cappsEnvName
+  name: containerAppsEnvName
 }
 
-resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
+resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
   name: 'make-line-service'
   location: location
   properties: {
@@ -18,7 +22,26 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       scale: {
-        minReplicas: 1
+        minReplicas: 0
+        rules: [
+          {
+            name: 'service-bus-scale-rule'
+            custom: {
+              type: 'azure-servicebus'
+              metadata: {
+                topicName: 'orders'
+                subscriptionName: 'make-line-service'
+                messageCount: '10'
+              }
+              auth: [
+                {
+                  secretRef: 'sb-root-connectionstring'
+                  triggerParameter: 'connection'
+                }
+              ]
+            }
+          }
+        ]
       }
       dapr: {
         enabled: true
@@ -43,11 +66,15 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
             metadata: [
               {
                 name: 'redisHost'
-                value: 'vigilantes-redis.redis.cache.windows.net:6379'
+                value: '${redisHost}:${redisSslPort}'
               }
               {
                 name: 'redisPassword'
                 secretRef: 'redis-password'
+              }
+              {
+                name: 'enableTLS'
+                value: 'true'
               }
             ]
           }
@@ -56,17 +83,17 @@ resource order_service 'Microsoft.Web/containerApps@2021-03-01' = {
     }
     configuration: {
       ingress: {
-        external: true
+        external: false
         targetPort: 80
       }
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: ''
+          value: sbRootConnectionString
         }
         {
           name: 'redis-password'
-          value: ''
+          value: redisPassword
         }
       ]
     }
