@@ -207,16 +207,17 @@ module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   }
 }
 
-// module accountingServiceModule 'modules/container-apps/accounting-service.bicep' = {
-//   name: '${deployment().name}--accounting-service'
-//   scope: resourceGroup(resourceGroupName)
-//   dependsOn: [
-//     containerAppsEnvModule
-//     bootstrapperModule
-//   ]
-//   params: {
-//     location: location
-//     containerAppsEnvName: containerAppsEnvName
-//     sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
-//   }
-// }
+module accountingServiceModule 'modules/container-apps/accounting-service.bicep' = {
+  name: '${deployment().name}--accounting-service'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+    bootstrapperModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
+    sqlConnectionString: sqlServerModule.outputs.sqlConnectionString
+  }
+}

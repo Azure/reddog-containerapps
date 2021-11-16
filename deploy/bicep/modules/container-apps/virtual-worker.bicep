@@ -15,6 +15,16 @@ resource virtualWorker 'Microsoft.Web/containerApps@2021-03-01' = {
         {
           name: 'virtual-worker'
           image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-virtual-worker:latest'
+          env: [
+            {
+              name: 'MIN_SECONDS_TO_COMPLETE_ITEM'
+              value: 0
+            }
+            {
+              name: 'MAX_SECONDS_TO_COMPLETE_ITEM'
+              value: 1
+            }
+          ]
         }
       ]
       scale: {
