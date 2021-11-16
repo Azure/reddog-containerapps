@@ -1,18 +1,19 @@
 targetScope = 'subscription'
 
+param suffix string
 param location string = deployment().location
-param resourceGroupName string = 'rg-reddog'
-param containerAppsEnvName string = 'ca-reddog2'
-param logAnalyticsWorkspaceName string = 'la-${containerAppsEnvName}'
-param appInsightsName string = 'ai-${containerAppsEnvName}'
-param serviceBusNamespaceName string = 'sb-${containerAppsEnvName}'
-param redisName string = 'r-${containerAppsEnvName}'
-param cosmosAccountName string = 'c-${containerAppsEnvName}'
+param resourceGroupName string = 'reddog-${suffix}'
+param containerAppsEnvName string = resourceGroupName
+param logAnalyticsWorkspaceName string = resourceGroupName
+param appInsightsName string = resourceGroupName
+param serviceBusNamespaceName string = resourceGroupName
+param redisName string = resourceGroupName
+param cosmosAccountName string = resourceGroupName
 param cosmosDatabaseName string = 'daprworkshop'
 param cosmosCollectionName string = 'loyalty'
-param storageAccountName string = replace(containerAppsEnvName, '-', '')
+param storageAccountName string = replace(resourceGroupName, '-', '')
 param blobContainerName string = 'receipts'
-param sqlServerName string = 'sql-reddog'
+param sqlServerName string = resourceGroupName
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
 param sqlAdminLoginPassword string = 'w@lkingth3d0g'

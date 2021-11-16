@@ -17,7 +17,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
   })
 }
 
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: appInsightsName
   location: location
   kind: 'web'
@@ -29,7 +29,6 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
   name: containerAppsEnvName
   location: location
-  kind: 'containerenvironment'
   properties: {
     type: 'managed'
     internalLoadBalancerEnabled: false
@@ -40,7 +39,11 @@ resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
         sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
       }
     }
+    containerAppsConfiguration: {
+      daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
+    }
   }
 }
 
 output cappsEnvId string = containerAppsEnv.id
+output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
