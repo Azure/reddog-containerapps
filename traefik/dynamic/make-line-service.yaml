@@ -4,7 +4,7 @@ http:
       loadBalancer:
         passHostHeader: false
         servers:
-          - url: "https://make-line-service.internal.{{ env CONTAINER_APP_ENV_DNS_SUFFIX }}"
+          - url: 'https://make-line-service.internal.{{ env "CONTAINER_APP_ENV_DNS_SUFFIX" }}'
   middlewares:
     rewrite-makeline-path:
       replacePathRegex:

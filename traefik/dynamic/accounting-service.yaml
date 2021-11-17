@@ -1,0 +1,18 @@
+http:
+  services:
+    accounting-service:
+      loadBalancer:
+        passHostHeader: false
+        servers:
+          - url: 'https://accounting-service.internal.{{ env "CONTAINER_APP_ENV_DNS_SUFFIX" }}'
+  middlewares:
+    rewrite-accounting-path:
+      replacePathRegex:
+        regex: "^/accounting(/|$)(.*)"
+        replacement: "/$2"
+  routers:
+    accounting:
+      rule: "PathPrefix(`/accounting`)"
+      middlewares:
+        - "rewrite-accounting-path"
+      service: accounting-service
