@@ -12,11 +12,6 @@ This repository leverages the [reddog applicaton codebase](https://github.com/Az
 
 ![Architecture diagram](assets/reddog_containerapps.png)
 
-For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
-
-#### Traefik 
-Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
-
 The architecture is comprised of a single Container Apps Environment that hosts ten respective Container Apps. While Dapr provides flexibility around the specific component implementations leveraged for the various building blocks, this demo is opinionated. There are also a few services that make use of KEDA scale rules. This repository leverages bicep templates in order to execute the deployment the Reddog applicaton and the supporting Azure Infrastructure. Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively and provides a transparent abstraction over ARM and ARM templates.  
 
 ## Infrastructure Resources Deployed: 
@@ -42,11 +37,30 @@ A member of the Azure SQL family, Azure SQL supports modern cloud applications o
 #### Azure Blob Storage 
 Azuree Blob storage is optimized for storing massive amounts of unstructured data. Unstructured data is data that doesn't adhere to a particular data model or definition, such as text or binary data. Blob storage is used by the Receipt Service via Dapr Output Bindings to store order receipts.
 
-## Getting Started
+## Container Apps Deployed 
+For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
+
+| Service          | Ingress |  Dapr Component(s) | KEDA Scale Rule(s) |
+|------------------|---------|--------------------|--------------------|
+| Traefik | Internal | Dapr not-enabled | n/a |
+| UI | External | Dapr not-enabled | n/a |
+| Order Service | Internal | PubSub: Azure Service Bus | n/a |
+| Accounting Service | Internal | PubSub: Azure Service Bus | n/a |
+| Receipt Service | Internal | PubSub: Azure Service Bus, Binding: Azure Blob | Azure Service Bus Topic Length |
+| Loyalty Service | Internal | PubSub: Azure Service Bus, State: Azure Cosmos DB | Azure Service Bus Topic Length |
+| Makeline Service | Internal | PubSub: Azure Service Bus, State: Azure Redis | Azure Service Bus Topic Length |
+| Virtual Worker | Internal | Binding: Cron | n/a |
+| Virtual Customer | n/a | n/a | n/a |
+
+*A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
+
+#### Traefik 
+Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
+### Getting Started
 
 This repo contains the scripts and configurations to deploy the Red Dog Demo along with the backing Azure Resources. Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
 
-## Contributing
+### Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
