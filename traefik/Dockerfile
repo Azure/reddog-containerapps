@@ -1,3 +1,3 @@
 FROM traefik
-COPY traefik.yaml /etc/traefik/
-COPY dynamic/* /etc/traefik/dynamic/
+COPY /traefik/traefik.yaml /etc/traefik/
+COPY /traefik/dynamic/* /etc/traefik/dynamic/
