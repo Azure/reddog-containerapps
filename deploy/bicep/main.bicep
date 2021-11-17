@@ -1,8 +1,7 @@
 targetScope = 'subscription'
 
-param suffix string
 param location string = deployment().location
-param resourceGroupName string = 'reddog-${suffix}'
+param resourceGroupName string = 'reddog-${uniqueString(subscription().subscriptionId)}'
 param containerAppsEnvName string = resourceGroupName
 param logAnalyticsWorkspaceName string = resourceGroupName
 param appInsightsName string = resourceGroupName
@@ -181,19 +180,6 @@ module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   }
 }
 
-module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
-  name: '${deployment().name}--virtual-customer'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    containerAppsEnvModule
-    orderServiceModule
-  ]
-  params: {
-    location: location
-    containerAppsEnvName: containerAppsEnvName
-  }
-}
-
 module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   name: '${deployment().name}--bootstrapper'
   scope: resourceGroup(resourceGroupName)
@@ -208,16 +194,60 @@ module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   }
 }
 
-// module accountingServiceModule 'modules/container-apps/accounting-service.bicep' = {
-//   name: '${deployment().name}--accounting-service'
-//   scope: resourceGroup(resourceGroupName)
-//   dependsOn: [
-//     containerAppsEnvModule
-//     bootstrapperModule
-//   ]
-//   params: {
-//     location: location
-//     containerAppsEnvName: containerAppsEnvName
-//     sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
-//   }
-// }
+module accountingServiceModule 'modules/container-apps/accounting-service.bicep' = {
+  name: '${deployment().name}--accounting-service'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+    bootstrapperModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
+    sqlConnectionString: sqlServerModule.outputs.sqlConnectionString
+  }
+}
+
+module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
+  name: '${deployment().name}--virtual-customer'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+    orderServiceModule
+    makeLineServiceModule
+    receiptGenerationServiceModule
+    loyaltyServiceModule
+    accountingServiceModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+  }
+}
+
+module traefikModule 'modules/container-apps/traefik.bicep' = {
+  name: '${deployment().name}--traefik'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+  }
+}
+
+module uiModule 'modules/container-apps/ui.bicep' = {
+  name: '${deployment().name}--ui'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+    defaultDomain: containerAppsEnvModule.outputs.defaultDomain
+    ingressSubdomain: traefikModule.outputs.subdomain
+  }
+}
