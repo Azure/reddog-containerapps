@@ -8,27 +8,43 @@ This repository leverages the [reddog applicaton codebase](https://github.com/Az
 
 *Please note that Azure Container Apps is currently in Public Preview and therefore is not recommended for Production workloads
 
-### Architecture 
+### Architecture
 
 ![Architecture diagram](assets/reddog_containerapps.png)
 
-For insight into the various microservices and their functionality, visit the [codebase repo](https://github.com/Azure/reddog-code). For the deployment, there will be a single Container Apps Environment hosting nine respective Container Apps: 
-| Service          | Ingress |  Dapr Component(s) | KEDA Scale Rule(s) |
-|------------------|---------|--------------------|--------------------|
-| Traefik | Internal | Dapr not-enabled | n/a |
-| UI | External | Dapr not-enabled | n/a |
-| Order Service | Internal | PubSub: Azure Service Bus | n/a |
-| Accounting Service | Internal | PubSub: Azure Service Bus | n/a |
-| Receipt Service | Internal | PubSub: Azure Service Bus, Binding: Azure Blob | Azure Service Bus Topic Length |
-| Loyalty Service | Internal | PubSub: Azure Service Bus, State: Azure Cosmos DB | Azure Service Bus Topic Length |
-| Makeline Service | Internal | PubSub: Azure Service Bus, State: Azure Redis | Azure Service Bus Topic Length |
-| Virtual Worker | Internal | Binding: Cron | n/a |
-| Virtual Customer | n/a | n/a | n/a |
+For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
 
-*A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
+#### Traefik 
+Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
 
+The architecture is comprised of a single Container Apps Environment that hosts ten respective Container Apps. While Dapr provides flexibility around the specific component implementations leveraged for the various building blocks, this demo is opinionated. There are also a few services that make use of KEDA scale rules. This repository leverages bicep templates in order to execute the deployment the Reddog applicaton and the supporting Azure Infrastructure. Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively and provides a transparent abstraction over ARM and ARM templates.  
 
-While Dapr provides flexibility around the specific component implementations leveraged for the various building blocks, this demo is opinionated. There are also a few services that make use of KEDA scale rules. The below table provides implementaion details: 
+## Infrastructure Resources Deployed: 
+
+#### Resource Group
+Deployed to hold all resources needed to deploy the above solution to Azure
+
+#### Container App Environment 
+The services in this solution are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps
+
+#### Azure Cosmos DB 
+Microsoft's NoSQL multi-model managed database as a service offering which is used as the Dapr State Store component implementation for the Loyalty Service
+
+#### Azure Cache for Redis 
+A distributed, in-memory, scalable solution providing super-fast data access which is used as the Dapr State Store component implementation for the Makeline Service
+
+#### Azure Service Bus 
+A fully managed enterprise message broker with message queues and publish-subscribe topics used as the Dapr PubSub component implementation. This component is leveraged by multiple services, with the Order Service publishing messages to four other services in the application: Makelike, Accounting, Loyalty and Receipt
+
+#### Azure SQL DB 
+A member of the Azure SQL family, Azure SQL supports modern cloud applications on an intelligent, managed database service. This resource is created for the Accounting Service, which makes use of EF Core for interfacing with the DB. 
+
+#### Azure Blob Storage 
+Azuree Blob storage is optimized for storing massive amounts of unstructured data. Unstructured data is data that doesn't adhere to a particular data model or definition, such as text or binary data. Blob storage is used by the Receipt Service via Dapr Output Bindings to store order receipts.
+
+## Getting Started
+
+This repo contains the scripts and configurations to deploy the Red Dog Demo along with the backing Azure Resources. Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
 
 ## Contributing
 
