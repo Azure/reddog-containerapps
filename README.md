@@ -22,7 +22,7 @@ This repository leverages bicep templates in order to execute the deployment of 
 A logical container which holds all resources needed to run the above solution in Azure
 
 #### Container App Environment 
-The services in this solution are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps
+The services in this solution are deployed to a single Container App environment, which acts as a secure boundary around groups of container apps
 
 #### Azure Cosmos DB 
 Microsoft's NoSQL multi-model managed database as a service offering which is used as the Dapr State Store component implementation for the Loyalty Service
