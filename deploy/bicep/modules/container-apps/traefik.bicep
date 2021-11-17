@@ -14,7 +14,7 @@ resource traefik 'Microsoft.Web/containerApps@2021-03-01' = {
       containers: [
         {
           name: 'traefik'
-          image: 'shadowc0de/dapr-workshop-traefik'
+          image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-traefik:latest'
         }
       ]
       scale: {
