@@ -1,8 +1,7 @@
 targetScope = 'subscription'
 
-param suffix string
 param location string = deployment().location
-param resourceGroupName string = 'reddog-${suffix}'
+param resourceGroupName string = 'reddog-${uniqueString(subscription().subscriptionId)}'
 param containerAppsEnvName string = resourceGroupName
 param logAnalyticsWorkspaceName string = resourceGroupName
 param appInsightsName string = resourceGroupName
@@ -187,6 +186,10 @@ module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
   dependsOn: [
     containerAppsEnvModule
     orderServiceModule
+    makeLineServiceModule
+    receiptGenerationServiceModule
+    loyaltyServiceModule
+    accountingServiceModule
   ]
   params: {
     location: location

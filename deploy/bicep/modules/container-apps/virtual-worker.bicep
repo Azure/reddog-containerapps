@@ -18,11 +18,11 @@ resource virtualWorker 'Microsoft.Web/containerApps@2021-03-01' = {
           env: [
             {
               name: 'MIN_SECONDS_TO_COMPLETE_ITEM'
-              value: 0
+              value: '0'
             }
             {
               name: 'MAX_SECONDS_TO_COMPLETE_ITEM'
-              value: 1
+              value: '1'
             }
           ]
         }
