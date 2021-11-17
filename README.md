@@ -39,6 +39,8 @@ Azuree Blob storage is optimized for storing massive amounts of unstructured dat
 
 ## Container Apps Deployed 
 For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
+#### Traefik 
+Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
 
 | Service          | Ingress |  Dapr Component(s) | KEDA Scale Rule(s) |
 |------------------|---------|--------------------|--------------------|
@@ -54,8 +56,6 @@ For insight into the various microservices and their functionality, visit the Re
 
 *A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
 
-#### Traefik 
-Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
 ### Getting Started
 
 This repo contains the scripts and configurations to deploy the Red Dog Demo along with the backing Azure Resources. Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
