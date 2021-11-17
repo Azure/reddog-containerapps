@@ -1,6 +1,6 @@
 # Red Dog Demo - Container Apps Deployment
 
-### Background
+## Background
 
 This repository leverages the [reddog applicaton codebase](https://github.com/Azure/reddog-code) and was created to help users deploy a comprehensive, microservice-based sample application to Azure Container Apps. 
 
@@ -8,19 +8,21 @@ This repository leverages the [reddog applicaton codebase](https://github.com/Az
 
 *Please note that Azure Container Apps is currently in Public Preview and therefore is not recommended for Production workloads
 
-### Architecture
+## Architecture
+
+The architecture is comprised of a single Container Apps Environment that hosts ten respective Container Apps. While Dapr provides flexibility around the specific component implementations leveraged for the various building blocks, this demo is opinionated. There are also a few services that make use of KEDA scale rules. 
 
 ![Architecture diagram](assets/reddog_containerapps.png)
 
-The architecture is comprised of a single Container Apps Environment that hosts ten respective Container Apps. While Dapr provides flexibility around the specific component implementations leveraged for the various building blocks, this demo is opinionated. There are also a few services that make use of KEDA scale rules. This repository leverages bicep templates in order to execute the deployment the Reddog applicaton and the supporting Azure Infrastructure. Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively and provides a transparent abstraction over ARM and ARM templates.  
+This repository leverages bicep templates in order to execute the deployment of the Reddog applicaton and the supporting Azure Infrastructure. Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively and provides a transparent abstraction over ARM and ARM templates.  
 
-## Infrastructure Resources Deployed: 
+### Infrastructure Components
 
 #### Resource Group
-Deployed to hold all resources needed to deploy the above solution to Azure
+A logical container which holds all resources needed to run the above solution in Azure
 
 #### Container App Environment 
-The services in this solution are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps
+The services in this solution are deployed to a single Container App environment, which acts as a secure boundary around groups of container apps
 
 #### Azure Cosmos DB 
 Microsoft's NoSQL multi-model managed database as a service offering which is used as the Dapr State Store component implementation for the Loyalty Service
@@ -37,7 +39,8 @@ A member of the Azure SQL family, Azure SQL supports modern cloud applications o
 #### Azure Blob Storage 
 Azuree Blob storage is optimized for storing massive amounts of unstructured data. Unstructured data is data that doesn't adhere to a particular data model or definition, such as text or binary data. Blob storage is used by the Receipt Service via Dapr Output Bindings to store order receipts.
 
-## Container Apps Deployed 
+### Container Apps 
+
 For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
 #### Traefik 
 Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
@@ -56,11 +59,11 @@ Traefik is a leading modern reverse proxy and load balancer that makes deploying
 
 *A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
 
-### Getting Started
+## Getting Started
 
 This repo contains the scripts and configurations to deploy the Red Dog Demo along with the backing Azure Resources. Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
 
-### Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
