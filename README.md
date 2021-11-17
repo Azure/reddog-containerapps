@@ -47,15 +47,15 @@ Traefik is a leading modern reverse proxy and load balancer that makes deploying
 
 | Service          | Ingress |  Dapr Component(s) | KEDA Scale Rule(s) |
 |------------------|---------|--------------------|--------------------|
-| Traefik | Internal | Dapr not-enabled | n/a |
-| UI | External | Dapr not-enabled | n/a |
-| Order Service | Internal | PubSub: Azure Service Bus | n/a |
-| Accounting Service | Internal | PubSub: Azure Service Bus | n/a |
+| Traefik | External | Dapr not-enabled (soon) | HTTP |
+| UI | Internal | Dapr not-enabled (soon) | HTTP |
+| Order Service | Internal | PubSub: Azure Service Bus | HTTP |
+| Accounting Service | Internal | PubSub: Azure Service Bus | Azure Service Bus Topic Length / HTTP |
 | Receipt Service | Internal | PubSub: Azure Service Bus, Binding: Azure Blob | Azure Service Bus Topic Length |
 | Loyalty Service | Internal | PubSub: Azure Service Bus, State: Azure Cosmos DB | Azure Service Bus Topic Length |
-| Makeline Service | Internal | PubSub: Azure Service Bus, State: Azure Redis | Azure Service Bus Topic Length |
-| Virtual Worker | Internal | Binding: Cron | n/a |
-| Virtual Customer | n/a | n/a | n/a |
+| Makeline Service | Internal | PubSub: Azure Service Bus, State: Azure Redis | Azure Service Bus Topic Length / HTTP |
+| Virtual Worker | None | Binding: Cron | n/a |
+| Virtual Customer | None | Service to Service | n/a |
 
 *A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
 
