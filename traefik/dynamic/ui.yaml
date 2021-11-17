@@ -4,9 +4,16 @@ http:
       loadBalancer:
         passHostHeader: false
         servers:
-          - url: "https://ui.internal.{{ env CONTAINER_APP_ENV_DNS_SUFFIX }}"
+          - url: 'https://ui.internal.{{ env "CONTAINER_APP_ENV_DNS_SUFFIX" }}'
+  middlewares:
+    rewrite-ui-path:
+      replacePathRegex:
+        regex: "^(/|$)(.*)"
+        replacement: "/$2"
   routers:
-    default:
+    ui:
       rule: "PathPrefix(`/`)"
+      middlewares:
+        - "rewrite-ui-path"
       service: ui
       priority: 1

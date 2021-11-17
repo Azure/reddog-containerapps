@@ -4,10 +4,10 @@ http:
       loadBalancer:
         passHostHeader: false
         servers:
-          - url: "https://order-service.internal.{{ env CONTAINER_APP_ENV_DNS_SUFFIX }}"
+          - url: 'https://order-service.internal.{{ env "CONTAINER_APP_ENV_DNS_SUFFIX" }}'
   routers:
     menuitem:
-      rule: "Path(`/menuitem`)"
+      rule: "Path(`/product`)"
       service: order-service
     order:
       rule: "Path(`/order`)"

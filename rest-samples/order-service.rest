@@ -1,6 +1,5 @@
-@order-service = order-service.<YOUR-CAPPS-ENV>.canadacentral.azurecontainerapps.io
+@order-service = reddog.proudpebble-f0d0d779.canadacentral.azurecontainerapps.io
 @storeId = Redmond
-@pubsubName="reddog.pubsub"
 
 ### Create an order via order-service POST
 POST https://{{order-service}}/order

@@ -180,23 +180,6 @@ module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   }
 }
 
-module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
-  name: '${deployment().name}--virtual-customer'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    containerAppsEnvModule
-    orderServiceModule
-    makeLineServiceModule
-    receiptGenerationServiceModule
-    loyaltyServiceModule
-    accountingServiceModule
-  ]
-  params: {
-    location: location
-    containerAppsEnvName: containerAppsEnvName
-  }
-}
-
 module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   name: '${deployment().name}--bootstrapper'
   scope: resourceGroup(resourceGroupName)
@@ -223,5 +206,48 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
     containerAppsEnvName: containerAppsEnvName
     sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
     sqlConnectionString: sqlServerModule.outputs.sqlConnectionString
+  }
+}
+
+module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
+  name: '${deployment().name}--virtual-customer'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+    orderServiceModule
+    makeLineServiceModule
+    receiptGenerationServiceModule
+    loyaltyServiceModule
+    accountingServiceModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+  }
+}
+
+module traefikModule 'modules/container-apps/traefik.bicep' = {
+  name: '${deployment().name}--traefik'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+  }
+}
+
+module uiModule 'modules/container-apps/ui.bicep' = {
+  name: '${deployment().name}--ui'
+  scope: resourceGroup(resourceGroupName)
+  dependsOn: [
+    containerAppsEnvModule
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+    defaultDomain: containerAppsEnvModule.outputs.defaultDomain
+    ingressSubdomain: traefikModule.outputs.subdomain
   }
 }

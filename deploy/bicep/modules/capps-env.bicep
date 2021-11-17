@@ -47,3 +47,4 @@ resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
 
 output cappsEnvId string = containerAppsEnv.id
 output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
+output defaultDomain string = containerAppsEnv.properties.defaultDomain

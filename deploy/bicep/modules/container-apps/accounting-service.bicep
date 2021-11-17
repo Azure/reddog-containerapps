@@ -45,6 +45,14 @@ resource accountingService 'Microsoft.Web/containerApps@2021-03-01' = {
               ]
             }
           }
+          {
+            name: 'http-rule'
+            http: {
+              metadata: {
+                  concurrentRequests: '100'
+              }
+            }
+          }
         ]
       }
       dapr: {
