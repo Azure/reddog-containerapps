@@ -19,7 +19,7 @@ This repository leverages bicep templates in order to execute the deployment of 
 ### Infrastructure Components
 
 #### Resource Group
-Deployed to hold all resources needed to deploy the above solution to Azure
+A logical container which holds all resources needed to run the above solution in Azure
 
 #### Container App Environment 
 The services in this solution are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps
