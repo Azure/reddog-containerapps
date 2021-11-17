@@ -1,14 +1,18 @@
-# Project
+# Red Dog Demo - Container Apps Deployment
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+### Background
 
-As the maintainer of this project, please make a few updates:
+This repository leverages the [reddog applicaton codebase](https://github.com/Azure/reddog-code) and was created to help users deploy a comprehensive, microservice-based sample application to Azure Container Apps. 
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+[Azure Container Apps](https://azure.microsoft.com/en-us/services/container-apps/)* is a fully managed serverless container service for building and deploying modern apps at scale. It enables developers to deploy containerized apps without managing complex infrastructure. The reddog microservices were built using the Distributed Application Runtime (Dapr), which has built-in support via Azure Container Apps. In addition to Dapr support, Container Apps also provides a managed Kubernetes Event Driven Autoscaling (KEDA) experience. Through the abstraction of infrastructure management and the incorporation of open source technology, Azure Container Apps provides an ideal target for the deployment of the reddog application. If you are interested in how Azure Container Apps compares to other container hosting options in Azure, visit the Azure Container Apps [documentation](https://docs.microsoft.com/en-us/azure/container-apps/compare-options)
+
+### Architecture 
+
+![Architecture diagram](assets/reddog_containerapps.png)
+
+This repository includes 
+
+*Please note that Azure Container Apps is currently in Public Preview and therefore is not recommended for Production workloads 
 
 ## Contributing
 
@@ -23,11 +27,3 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## Trademarks
-
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
