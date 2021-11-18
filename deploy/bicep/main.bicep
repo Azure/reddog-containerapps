@@ -1,7 +1,8 @@
 targetScope = 'subscription'
 
 param location string = deployment().location
-param resourceGroupName string = 'reddog-${uniqueString(subscription().subscriptionId)}'
+param uniqueSeed string = '${subscription().subscriptionId}-${deployment().name}'
+param resourceGroupName string = 'reddog-${uniqueString(uniqueSeed)}'
 param containerAppsEnvName string = resourceGroupName
 param logAnalyticsWorkspaceName string = resourceGroupName
 param appInsightsName string = resourceGroupName

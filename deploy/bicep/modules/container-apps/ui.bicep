@@ -49,7 +49,8 @@ resource ui 'Microsoft.Web/containerApps@2021-03-01' = {
         minReplicas: 0
       }
       dapr: {
-        enabled: false
+        enabled: true
+        appId: 'ui'
       }
     }
     configuration: {
