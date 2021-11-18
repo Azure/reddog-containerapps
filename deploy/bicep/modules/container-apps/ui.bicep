@@ -34,11 +34,11 @@ resource ui 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'VUE_APP_MAKELINE_BASE_URL'
-              value: 'http://localhost'
+              value: 'http://localhost:3500/v1.0/invoke/make-line-service/method'
             }
             {
               name: 'VUE_APP_ACCOUNTING_BASE_URL'  
-              value: 'http://localhost'
+              value: 'http://localhost:3500/v1.0/invoke/accounting-service/method'
             }
           ]
         }
