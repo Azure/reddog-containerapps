@@ -244,11 +244,11 @@ module uiModule 'modules/container-apps/ui.bicep' = {
   scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    makeLineServiceModule
+    accountingServiceModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    defaultDomain: containerAppsEnvModule.outputs.defaultDomain
-    ingressSubdomain: traefikModule.outputs.subdomain
   }
 }
