@@ -36,11 +36,11 @@ resource ui 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'VUE_APP_MAKELINE_BASE_URL'
-              value: 'http://make-line-service.internal.${defaultDomain}'
+              value: 'http://localhost'
             }
             {
               name: 'VUE_APP_ACCOUNTING_BASE_URL'  
-              value: 'http://accounting-service.internal.${defaultDomain}'
+              value: 'http://localhost'
             }
           ]
         }
