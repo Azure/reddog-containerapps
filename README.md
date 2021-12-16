@@ -1,5 +1,7 @@
 # Red Dog Demo - Container Apps Deployment
 
+[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Freddog-containerapps%2Fmain%2Fdeploy%2F_generated%2Fdeploy.json)
+
 ## Background
 
 This repository leverages the [reddog applicaton codebase](https://github.com/Azure/reddog-code) and was created to help users deploy a comprehensive, microservice-based sample application to Azure Container Apps. 

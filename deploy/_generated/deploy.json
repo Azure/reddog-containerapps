@@ -1,0 +1,1879 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1124.51302",
+      "templateHash": "13752840951016932879"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[deployment().location]"
+    },
+    "uniqueSeed": {
+      "type": "string",
+      "defaultValue": "[format('{0}-{1}', subscription().subscriptionId, deployment().name)]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('reddog-{0}', uniqueString(parameters('uniqueSeed')))]"
+    },
+    "containerAppsEnvName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "appInsightsName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "redisName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "cosmosAccountName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "cosmosDatabaseName": {
+      "type": "string",
+      "defaultValue": "daprworkshop"
+    },
+    "cosmosCollectionName": {
+      "type": "string",
+      "defaultValue": "loyalty"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "[replace(parameters('resourceGroupName'), '-', '')]"
+    },
+    "blobContainerName": {
+      "type": "string",
+      "defaultValue": "receipts"
+    },
+    "sqlServerName": {
+      "type": "string",
+      "defaultValue": "[parameters('resourceGroupName')]"
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      "defaultValue": "reddog"
+    },
+    "sqlAdminLogin": {
+      "type": "string",
+      "defaultValue": "reddog"
+    },
+    "sqlAdminLoginPassword": {
+      "type": "string",
+      "defaultValue": "w@lkingth3d0g"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--resourceGroup', deployment().name)]",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "resourceGroupName": {
+            "value": "[parameters('resourceGroupName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "8751387075422049121"
+            }
+          },
+          "parameters": {
+            "resourceGroupName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/resourceGroups",
+              "apiVersion": "2021-04-01",
+              "name": "[parameters('resourceGroupName')]",
+              "location": "[parameters('location')]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--containerAppsEnv', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "logAnalyticsWorkspaceName": {
+            "value": "[parameters('logAnalyticsWorkspaceName')]"
+          },
+          "appInsightsName": {
+            "value": "[parameters('appInsightsName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "8533045337101154022"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "logAnalyticsWorkspaceName": {
+              "type": "string"
+            },
+            "appInsightsName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2020-03-01-preview",
+              "name": "[parameters('logAnalyticsWorkspaceName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "retentionInDays": 30,
+                "features": {
+                  "searchVersion": 1
+                },
+                "sku": {
+                  "name": "PerGB2018"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Insights/components",
+              "apiVersion": "2020-02-02-preview",
+              "name": "[parameters('appInsightsName')]",
+              "location": "[parameters('location')]",
+              "kind": "web",
+              "properties": {
+                "Application_Type": "web"
+              }
+            },
+            {
+              "type": "Microsoft.Web/kubeEnvironments",
+              "apiVersion": "2021-02-01",
+              "name": "[parameters('containerAppsEnvName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "type": "managed",
+                "internalLoadBalancerEnabled": false,
+                "appLogsConfiguration": {
+                  "destination": "log-analytics",
+                  "logAnalyticsConfiguration": {
+                    "customerId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))).customerId]",
+                    "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2020-03-01-preview').primarySharedKey]"
+                  }
+                },
+                "containerAppsConfiguration": {
+                  "daprAIInstrumentationKey": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName'))).InstrumentationKey]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "cappsEnvId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]"
+            },
+            "appInsightsInstrumentationKey": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName'))).InstrumentationKey]"
+            },
+            "defaultDomain": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))).defaultDomain]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('{0}--resourceGroup', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--servicebus', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "serviceBusNamespaceName": {
+            "value": "[parameters('serviceBusNamespaceName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "15061578396143995053"
+            }
+          },
+          "parameters": {
+            "serviceBusNamespaceName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ServiceBus/namespaces",
+              "apiVersion": "2021-06-01-preview",
+              "name": "[parameters('serviceBusNamespaceName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard",
+                "tier": "Standard",
+                "capacity": 1
+              }
+            }
+          ],
+          "outputs": {
+            "rootConnectionString": {
+              "type": "string",
+              "value": "[listKeys(format('{0}/AuthorizationRules/RootManageSharedAccessKey', resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))), '2021-06-01-preview').primaryConnectionString]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('{0}--resourceGroup', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--redis', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "redisName": {
+            "value": "[parameters('redisName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "3383617881371582829"
+            }
+          },
+          "parameters": {
+            "redisName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Cache/redis",
+              "apiVersion": "2020-12-01",
+              "name": "[parameters('redisName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "sku": {
+                  "name": "Standard",
+                  "family": "C",
+                  "capacity": 1
+                },
+                "enableNonSslPort": false
+              }
+            }
+          ],
+          "outputs": {
+            "redisHost": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Cache/redis', parameters('redisName'))).hostName]"
+            },
+            "redisSslPort": {
+              "type": "int",
+              "value": "[reference(resourceId('Microsoft.Cache/redis', parameters('redisName'))).sslPort]"
+            },
+            "redisPassword": {
+              "type": "string",
+              "value": "[listKeys(resourceId('Microsoft.Cache/redis', parameters('redisName')), '2020-12-01').primaryKey]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('{0}--resourceGroup', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--cosmos', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "cosmosAccountName": {
+            "value": "[parameters('cosmosAccountName')]"
+          },
+          "cosmosDatabaseName": {
+            "value": "[parameters('cosmosDatabaseName')]"
+          },
+          "cosmosCollectionName": {
+            "value": "[parameters('cosmosCollectionName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "17958459489449509298"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "cosmosAccountName": {
+              "type": "string"
+            },
+            "cosmosDatabaseName": {
+              "type": "string"
+            },
+            "cosmosCollectionName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts",
+              "apiVersion": "2021-06-15",
+              "name": "[parameters('cosmosAccountName')]",
+              "kind": "GlobalDocumentDB",
+              "location": "[parameters('location')]",
+              "properties": {
+                "consistencyPolicy": {
+                  "defaultConsistencyLevel": "Session"
+                },
+                "locations": [
+                  {
+                    "locationName": "[parameters('location')]"
+                  }
+                ],
+                "databaseAccountOfferType": "Standard"
+              }
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+              "apiVersion": "2021-06-15",
+              "name": "[format('{0}/{1}', parameters('cosmosAccountName'), parameters('cosmosDatabaseName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[parameters('cosmosDatabaseName')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+              "apiVersion": "2021-06-15",
+              "name": "[format('{0}/{1}/{2}', parameters('cosmosAccountName'), parameters('cosmosDatabaseName'), parameters('cosmosCollectionName'))]",
+              "properties": {
+                "resource": {
+                  "id": "[parameters('cosmosCollectionName')]",
+                  "partitionKey": {
+                    "paths": [
+                      "/id"
+                    ],
+                    "kind": "Hash"
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosAccountName'))]",
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('cosmosAccountName'), parameters('cosmosDatabaseName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "cosmosUri": {
+              "type": "string",
+              "value": "[format('https://{0}.documents.azure.com:443/', parameters('cosmosAccountName'))]"
+            },
+            "cosmosPrimaryKey": {
+              "type": "string",
+              "value": "[listkeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosAccountName')), '2021-06-15').primaryMasterKey]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('{0}--resourceGroup', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--storage', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "blobContainerName": {
+            "value": "[parameters('blobContainerName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "15628616796146583332"
+            }
+          },
+          "parameters": {
+            "storageAccountName": {
+              "type": "string"
+            },
+            "blobContainerName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-06-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "kind": "StorageV2",
+              "sku": {
+                "name": "Standard_LRS"
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', parameters('blobContainerName'))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "accessKey": {
+              "type": "string",
+              "value": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-06-01').keys[0].value]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('{0}--resourceGroup', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--sqlserver', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "sqlServerName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "sqlDatabaseName": {
+            "value": "[parameters('sqlDatabaseName')]"
+          },
+          "sqlAdminLogin": {
+            "value": "[parameters('sqlAdminLogin')]"
+          },
+          "sqlAdminLoginPassword": {
+            "value": "[parameters('sqlAdminLoginPassword')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "5356207097902049438"
+            }
+          },
+          "parameters": {
+            "sqlServerName": {
+              "type": "string"
+            },
+            "sqlDatabaseName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sqlAdminLogin": {
+              "type": "string"
+            },
+            "sqlAdminLoginPassword": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Sql/servers",
+              "apiVersion": "2021-05-01-preview",
+              "name": "[parameters('sqlServerName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "administratorLogin": "[parameters('sqlAdminLogin')]",
+                "administratorLoginPassword": "[parameters('sqlAdminLoginPassword')]"
+              }
+            },
+            {
+              "type": "Microsoft.Sql/servers/firewallRules",
+              "apiVersion": "2021-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), 'AllowAllWindowsAzureIps')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases",
+              "apiVersion": "2021-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabaseName'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "GP_S_Gen5",
+                "tier": "GeneralPurpose",
+                "family": "Gen5",
+                "capacity": 1
+              },
+              "properties": {
+                "autoPauseDelay": 60
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "sqlConnectionString": {
+              "type": "string",
+              "value": "[format('Server=tcp:{0}{1},1433;Initial Catalog={2};Persist Security Info=False;User ID={3};Password={4};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;', parameters('sqlServerName'), environment().suffixes.sqlServerHostname, parameters('sqlDatabaseName'), parameters('sqlAdminLogin'), parameters('sqlAdminLoginPassword'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', format('{0}--resourceGroup', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--order-service', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "sbRootConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name)), '2020-10-01').outputs.rootConnectionString.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "2217864543810417406"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sbRootConnectionString": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "order-service",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "order-service",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-order-service:latest"
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "order-service",
+                    "appPort": 80,
+                    "components": [
+                      {
+                        "name": "reddog.pubsub",
+                        "type": "pubsub.azure.servicebus",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "connectionString",
+                            "secretRef": "sb-root-connectionstring"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 80
+                  },
+                  "secrets": [
+                    {
+                      "name": "sb-root-connectionstring",
+                      "value": "[parameters('sbRootConnectionString')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--make-line-service', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "sbRootConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name)), '2020-10-01').outputs.rootConnectionString.value]"
+          },
+          "redisHost": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--redis', deployment().name)), '2020-10-01').outputs.redisHost.value]"
+          },
+          "redisSslPort": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--redis', deployment().name)), '2020-10-01').outputs.redisSslPort.value]"
+          },
+          "redisPassword": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--redis', deployment().name)), '2020-10-01').outputs.redisPassword.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "11629623909671807950"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sbRootConnectionString": {
+              "type": "string"
+            },
+            "redisHost": {
+              "type": "string"
+            },
+            "redisSslPort": {
+              "type": "int"
+            },
+            "redisPassword": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "make-line-service",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "make-line-service",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-make-line-service:latest"
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "rules": [
+                      {
+                        "name": "service-bus-scale-rule",
+                        "custom": {
+                          "type": "azure-servicebus",
+                          "metadata": {
+                            "topicName": "orders",
+                            "subscriptionName": "make-line-service",
+                            "messageCount": "10"
+                          },
+                          "auth": [
+                            {
+                              "secretRef": "sb-root-connectionstring",
+                              "triggerParameter": "connection"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "http-rule",
+                        "http": {
+                          "metadata": {
+                            "concurrentRequests": "100"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "make-line-service",
+                    "appPort": 80,
+                    "components": [
+                      {
+                        "name": "reddog.pubsub",
+                        "type": "pubsub.azure.servicebus",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "connectionString",
+                            "secretRef": "sb-root-connectionstring"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "reddog.state.makeline",
+                        "type": "state.redis",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "redisHost",
+                            "value": "[format('{0}:{1}', parameters('redisHost'), parameters('redisSslPort'))]"
+                          },
+                          {
+                            "name": "redisPassword",
+                            "secretRef": "redis-password"
+                          },
+                          {
+                            "name": "enableTLS",
+                            "value": "true"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 80
+                  },
+                  "secrets": [
+                    {
+                      "name": "sb-root-connectionstring",
+                      "value": "[parameters('sbRootConnectionString')]"
+                    },
+                    {
+                      "name": "redis-password",
+                      "value": "[parameters('redisPassword')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--redis', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--loyalty-service', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "sbRootConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name)), '2020-10-01').outputs.rootConnectionString.value]"
+          },
+          "cosmosDatabaseName": {
+            "value": "[parameters('cosmosDatabaseName')]"
+          },
+          "cosmosCollectionName": {
+            "value": "[parameters('cosmosCollectionName')]"
+          },
+          "cosmosUrl": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--cosmos', deployment().name)), '2020-10-01').outputs.cosmosUri.value]"
+          },
+          "cosmosPrimaryKey": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--cosmos', deployment().name)), '2020-10-01').outputs.cosmosPrimaryKey.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "7674388704272391321"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sbRootConnectionString": {
+              "type": "string"
+            },
+            "cosmosUrl": {
+              "type": "string"
+            },
+            "cosmosDatabaseName": {
+              "type": "string"
+            },
+            "cosmosCollectionName": {
+              "type": "string"
+            },
+            "cosmosPrimaryKey": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "loyalty-service",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "loyalty-service",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-loyalty-service:latest"
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "rules": [
+                      {
+                        "name": "service-bus-scale-rule",
+                        "custom": {
+                          "type": "azure-servicebus",
+                          "metadata": {
+                            "topicName": "orders",
+                            "subscriptionName": "loyalty-service",
+                            "messageCount": "10"
+                          },
+                          "auth": [
+                            {
+                              "secretRef": "sb-root-connectionstring",
+                              "triggerParameter": "connection"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "loyalty-service",
+                    "appPort": 80,
+                    "components": [
+                      {
+                        "name": "reddog.pubsub",
+                        "type": "pubsub.azure.servicebus",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "connectionString",
+                            "secretRef": "sb-root-connectionstring"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "reddog.state.loyalty",
+                        "type": "state.azure.cosmosdb",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "url",
+                            "value": "[parameters('cosmosUrl')]"
+                          },
+                          {
+                            "name": "database",
+                            "value": "[parameters('cosmosDatabaseName')]"
+                          },
+                          {
+                            "name": "collection",
+                            "value": "[parameters('cosmosCollectionName')]"
+                          },
+                          {
+                            "name": "masterKey",
+                            "secretRef": "cosmos-primary-rw-key"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 80
+                  },
+                  "secrets": [
+                    {
+                      "name": "sb-root-connectionstring",
+                      "value": "[parameters('sbRootConnectionString')]"
+                    },
+                    {
+                      "name": "cosmos-primary-rw-key",
+                      "value": "[parameters('cosmosPrimaryKey')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--cosmos', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--receipt-generation-service', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "sbRootConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name)), '2020-10-01').outputs.rootConnectionString.value]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "blobStorageKey": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--storage', deployment().name)), '2020-10-01').outputs.accessKey.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "6312333049908456138"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sbRootConnectionString": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "blobStorageKey": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "receipt-generation-service",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "receipt-generation-service",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-receipt-generation-service:latest"
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "rules": [
+                      {
+                        "name": "service-bus-scale-rule",
+                        "custom": {
+                          "type": "azure-servicebus",
+                          "metadata": {
+                            "topicName": "orders",
+                            "subscriptionName": "receipt-generation-service",
+                            "messageCount": "10"
+                          },
+                          "auth": [
+                            {
+                              "secretRef": "sb-root-connectionstring",
+                              "triggerParameter": "connection"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "receipt-generation-service",
+                    "appPort": 80,
+                    "components": [
+                      {
+                        "name": "reddog.pubsub",
+                        "type": "pubsub.azure.servicebus",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "connectionString",
+                            "secretRef": "sb-root-connectionstring"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "reddog.binding.receipt",
+                        "type": "bindings.azure.blobstorage",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "storageAccount",
+                            "value": "[parameters('storageAccountName')]"
+                          },
+                          {
+                            "name": "container",
+                            "value": "receipts"
+                          },
+                          {
+                            "name": "storageAccessKey",
+                            "secretRef": "blob-storage-key"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 80
+                  },
+                  "secrets": [
+                    {
+                      "name": "sb-root-connectionstring",
+                      "value": "[parameters('sbRootConnectionString')]"
+                    },
+                    {
+                      "name": "blob-storage-key",
+                      "value": "[parameters('blobStorageKey')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--storage', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--virtual-worker', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "476880689190637504"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "virtual-worker",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "virtual-worker",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-virtual-worker:latest",
+                      "env": [
+                        {
+                          "name": "MIN_SECONDS_TO_COMPLETE_ITEM",
+                          "value": "0"
+                        },
+                        {
+                          "name": "MAX_SECONDS_TO_COMPLETE_ITEM",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 1
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "virtual-worker",
+                    "appPort": 80,
+                    "components": [
+                      {
+                        "name": "orders",
+                        "type": "bindings.cron",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "schedule",
+                            "value": "@every 15s"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 80
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--make-line-service', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--bootstrapper', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "sqlConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--sqlserver', deployment().name)), '2020-10-01').outputs.sqlConnectionString.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "8829587963161372306"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sqlConnectionString": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "bootstrapper",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "bootstrapper",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-bootstrapper:latest",
+                      "env": [
+                        {
+                          "name": "reddog-sql",
+                          "secretRef": "reddog-sql"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "bootstrapper"
+                  }
+                },
+                "configuration": {
+                  "secrets": [
+                    {
+                      "name": "reddog-sql",
+                      "value": "[parameters('sqlConnectionString')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--order-service', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--sqlserver', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--accounting-service', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          },
+          "sbRootConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name)), '2020-10-01').outputs.rootConnectionString.value]"
+          },
+          "sqlConnectionString": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--sqlserver', deployment().name)), '2020-10-01').outputs.sqlConnectionString.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "18127877979055717619"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sbRootConnectionString": {
+              "type": "string"
+            },
+            "sqlConnectionString": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "accounting-service",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "accounting-service",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-accounting-service:latest",
+                      "env": [
+                        {
+                          "name": "reddog-sql",
+                          "secretRef": "reddog-sql"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0,
+                    "rules": [
+                      {
+                        "name": "service-bus-scale-rule",
+                        "custom": {
+                          "type": "azure-servicebus",
+                          "metadata": {
+                            "topicName": "orders",
+                            "subscriptionName": "accounting-service",
+                            "messageCount": "10"
+                          },
+                          "auth": [
+                            {
+                              "secretRef": "sb-root-connectionstring",
+                              "triggerParameter": "connection"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "http-rule",
+                        "http": {
+                          "metadata": {
+                            "concurrentRequests": "100"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "accounting-service",
+                    "appPort": 80,
+                    "components": [
+                      {
+                        "name": "reddog.pubsub",
+                        "type": "pubsub.azure.servicebus",
+                        "version": "v1",
+                        "metadata": [
+                          {
+                            "name": "connectionString",
+                            "secretRef": "sb-root-connectionstring"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 80
+                  },
+                  "secrets": [
+                    {
+                      "name": "sb-root-connectionstring",
+                      "value": "[parameters('sbRootConnectionString')]"
+                    },
+                    {
+                      "name": "reddog-sql",
+                      "value": "[parameters('sqlConnectionString')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--bootstrapper', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--servicebus', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--sqlserver', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--virtual-customer', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "9242902223889705678"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "virtual-customers",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "virtual-customers",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-virtual-customers:latest"
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 1
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "virtual-customers"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--accounting-service', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--loyalty-service', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--make-line-service', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--order-service', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--receipt-generation-service', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--traefik', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "13423135766258610900"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "reddog",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "traefik",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-traefik:latest"
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "traefik"
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 80
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "subdomain": {
+              "type": "string",
+              "value": "reddog"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}--ui', deployment().name)]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerAppsEnvName": {
+            "value": "[parameters('containerAppsEnvName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "11045988550274773315"
+            }
+          },
+          "parameters": {
+            "containerAppsEnvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/containerApps",
+              "apiVersion": "2021-03-01",
+              "name": "ui",
+              "location": "[parameters('location')]",
+              "properties": {
+                "kubeEnvironmentId": "[resourceId('Microsoft.Web/kubeEnvironments', parameters('containerAppsEnvName'))]",
+                "template": {
+                  "containers": [
+                    {
+                      "name": "ui",
+                      "image": "ghcr.io/azure/reddog-retail-demo/reddog-retail-ui:latest",
+                      "env": [
+                        {
+                          "name": "VUE_APP_IS_CORP",
+                          "value": "false"
+                        },
+                        {
+                          "name": "VUE_APP_STORE_ID",
+                          "value": "Redmond"
+                        },
+                        {
+                          "name": "VUE_APP_SITE_TYPE",
+                          "value": "Pharmacy"
+                        },
+                        {
+                          "name": "VUE_APP_SITE_TITLE",
+                          "value": "Red Dog Bodega :: Market fresh food, pharmaceuticals, and fireworks!"
+                        },
+                        {
+                          "name": "VUE_APP_MAKELINE_BASE_URL",
+                          "value": "http://localhost:3500/v1.0/invoke/make-line-service/method"
+                        },
+                        {
+                          "name": "VUE_APP_ACCOUNTING_BASE_URL",
+                          "value": "http://localhost:3500/v1.0/invoke/accounting-service/method"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 0
+                  },
+                  "dapr": {
+                    "enabled": true,
+                    "appId": "ui"
+                  }
+                },
+                "configuration": {
+                  "ingress": {
+                    "external": false,
+                    "targetPort": 8080
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--accounting-service', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--containerAppsEnv', deployment().name))]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', format('{0}--make-line-service', deployment().name))]"
+      ]
+    }
+  ]
+}
