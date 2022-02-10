@@ -6,7 +6,7 @@ param cosmosDatabaseName string
 param cosmosCollectionName string
 param cosmosPrimaryKey string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
+resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
 }
 
