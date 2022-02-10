@@ -1,23 +1,24 @@
 param containerAppsEnvName string
 param location string
 param sbRootConnectionString string
-param storageAccountName string
-param blobStorageKey string
+param redisHost string
+param redisSslPort int
+param redisPassword string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
 }
 
-resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
-  name: 'receipt-generation-service'
+resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
+  name: 'make-line-service'
   location: location
   properties: {
     kubeEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {
-          name: 'receipt-generation-service'
-          image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-receipt-generation-service:latest'
+          name: 'make-line-service'
+          image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-make-line-service:latest'
         }
       ]
       scale: {
@@ -29,7 +30,7 @@ resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
               type: 'azure-servicebus'
               metadata: {
                 topicName: 'orders'
-                subscriptionName: 'receipt-generation-service'
+                subscriptionName: 'make-line-service'
                 messageCount: '10'
               }
               auth: [
@@ -40,11 +41,19 @@ resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
               ]
             }
           }
+          {
+            name: 'http-rule'
+            http: {
+              metadata: {
+                  concurrentRequests: '100'
+              }
+            }
+          }
         ]
       }
       dapr: {
         enabled: true
-        appId: 'receipt-generation-service'
+        appId: 'make-line-service'
         appPort: 80
         components: [
           {
@@ -59,21 +68,21 @@ resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
             ]
           }
           {
-            name: 'reddog.binding.receipt'
-            type: 'bindings.azure.blobstorage'
+            name: 'reddog.state.makeline'
+            type: 'state.redis'
             version: 'v1'
             metadata: [
               {
-                name: 'storageAccount'
-                value: storageAccountName
+                name: 'redisHost'
+                value: '${redisHost}:${redisSslPort}'
               }
               {
-                name: 'container'
-                value: 'receipts'
+                name: 'redisPassword'
+                secretRef: 'redis-password'
               }
               {
-                name: 'storageAccessKey'
-                secretRef: 'blob-storage-key'
+                name: 'enableTLS'
+                value: 'true'
               }
             ]
           }
@@ -91,8 +100,8 @@ resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
           value: sbRootConnectionString
         }
         {
-          name: 'blob-storage-key'
-          value: blobStorageKey
+          name: 'redis-password'
+          value: redisPassword
         }
       ]
     }

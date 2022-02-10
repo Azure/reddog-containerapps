@@ -1,15 +1,15 @@
 param location string = resourceGroup().location
-param containerAppsEnvName string = resourceGroup().location
-param logAnalyticsWorkspaceName string = resourceGroup().location
-param appInsightsName string = resourceGroup().location
-param serviceBusNamespaceName string = resourceGroup().location
-param redisName string = resourceGroup().location
-param cosmosAccountName string = resourceGroup().location
-param cosmosDatabaseName string = 'daprworkshop'
-param cosmosCollectionName string = 'loyalty'
-param storageAccountName string = replace(resourceGroup().location, '-', '')
+param containerAppsEnvName string = resourceGroup().name
+param logAnalyticsWorkspaceName string = resourceGroup().name
+param appInsightsName string = resourceGroup().name
+param serviceBusNamespaceName string = resourceGroup().name
+//param redisName string = resourceGroup().name
+param cosmosAccountName string = resourceGroup().name
+param cosmosDatabaseName string = 'reddog'
+param cosmosCollectionName string = 'reddogstate'
+param storageAccountName string = replace(resourceGroup().name, '-', '')
 param blobContainerName string = 'receipts'
-param sqlServerName string = resourceGroup().location
+param sqlServerName string = resourceGroup().name
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
 param sqlAdminLoginPassword string = 'w@lkingth3d0g'
@@ -32,13 +32,13 @@ module serviceBusModule 'modules/servicebus.bicep' = {
   }
 }
 
-module redisModule 'modules/redis.bicep' = {
-  name: '${deployment().name}--redis'
-  params: {
-    redisName: redisName
-    location: location
-  }
-}
+// module redisModule 'modules/redis.bicep' = {
+//   name: '${deployment().name}--redis'
+//   params: {
+//     redisName: redisName
+//     location: location
+//   }
+// }
 
 module cosmosModule 'modules/cosmos.bicep' = {
   name: '${deployment().name}--cosmos'
@@ -91,9 +91,10 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
     location: location
     containerAppsEnvName: containerAppsEnvName
     sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
-    redisHost: redisModule.outputs.redisHost
-    redisSslPort: redisModule.outputs.redisSslPort
-    redisPassword: redisModule.outputs.redisPassword
+    cosmosDatabaseName: cosmosDatabaseName
+    cosmosCollectionName: cosmosCollectionName
+    cosmosUrl: cosmosModule.outputs.cosmosUri
+    cosmosPrimaryKey: cosmosModule.outputs.cosmosPrimaryKey
   }
 }
 
@@ -205,3 +206,5 @@ module uiModule 'modules/container-apps/ui.bicep' = {
     containerAppsEnvName: containerAppsEnvName
   }
 }
+
+output defaultDomain string = containerAppsEnvModule.outputs.defaultDomain

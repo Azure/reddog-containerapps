@@ -26,7 +26,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   }
 }
 
-resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' = {
+resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' = {
   name: containerAppsEnvName
   location: location
   properties: {

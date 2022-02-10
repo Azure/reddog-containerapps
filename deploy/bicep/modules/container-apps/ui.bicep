@@ -1,7 +1,7 @@
 param containerAppsEnvName string
 param location string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
+resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
 }
 
@@ -22,15 +22,15 @@ resource ui 'Microsoft.Web/containerApps@2021-03-01' = {
             }
             {
               name: 'VUE_APP_STORE_ID'
-              value: 'Redmond'
+              value: 'Denver'
             }
             {
               name: 'VUE_APP_SITE_TYPE'
-              value: 'Pharmacy'
+              value: 'Bodega'
             }
             {
               name: 'VUE_APP_SITE_TITLE'
-              value: 'Red Dog Bodega :: Market fresh food, pharmaceuticals, and fireworks!'
+              value: 'Red Dog Bodega :: We have FIREWORKS!'
             }
             {
               name: 'VUE_APP_MAKELINE_BASE_URL'

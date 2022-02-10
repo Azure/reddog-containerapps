@@ -1,11 +1,12 @@
 param containerAppsEnvName string
 param location string
 param sbRootConnectionString string
-param redisHost string
-param redisSslPort int
-param redisPassword string
+param cosmosUrl string
+param cosmosDatabaseName string
+param cosmosCollectionName string
+param cosmosPrimaryKey string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
+resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
 }
 
@@ -69,20 +70,27 @@ resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
           }
           {
             name: 'reddog.state.makeline'
-            type: 'state.redis'
+            type: 'state.azure.cosmosdb'
             version: 'v1'
             metadata: [
               {
-                name: 'redisHost'
-                value: '${redisHost}:${redisSslPort}'
+                name: 'url'
+                // value: 'https://vigilantescosmosdb.documents.azure.com:443/'
+                value: cosmosUrl
               }
               {
-                name: 'redisPassword'
-                secretRef: 'redis-password'
+                name: 'database'
+                // value: 'daprworkshop'
+                value: cosmosDatabaseName
               }
               {
-                name: 'enableTLS'
-                value: 'true'
+                name: 'collection'
+                // value: 'loyalty'
+                value: cosmosCollectionName
+              }
+              {
+                name: 'masterKey'
+                secretRef: 'cosmos-primary-rw-key'
               }
             ]
           }
@@ -100,8 +108,8 @@ resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
           value: sbRootConnectionString
         }
         {
-          name: 'redis-password'
-          value: redisPassword
+          name: 'cosmos-primary-rw-key'
+          value: cosmosPrimaryKey
         }
       ]
     }

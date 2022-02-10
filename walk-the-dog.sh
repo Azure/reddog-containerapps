@@ -38,9 +38,35 @@ echo ''
 echo '***************************************************************'
 echo 'Starting Bicep deployment of resources'
 echo '***************************************************************'
-exit 0
+
 az deployment group create \
     --name reddog-deploy \
     --resource-group $RG \
     --only-show-errors \
-    --template-file ./deploy/main.bicep
+    --template-file ./deploy/bicep/main.bicep
+
+# Deployment outputs
+echo ''
+echo 'Saving bicep outputs to a file'
+az deployment group show -g $RG -n reddog-deploy -o json --query properties.outputs > "./outputs/bicep-outputs-$RG.json"
+
+export CONTAINER_APPS_DOMAIN=$(cat ./outputs/bicep-outputs-$RG.json | jq -r .defaultDomain.value)
+# export STORE_URL="https://"$(cat ./outputs/bicep-outputs-$RG.json | jq -r .storeFqdn.value)
+# export ORDER_URL="https://"$(cat ./outputs/bicep-outputs-$RG.json | jq -r .orderFqdn.value)
+# export INVENTORY_URL="https://"$(cat ./outputs/bicep-outputs-$RG.json | jq -r .inventoryFqdn.value)
+# export LOG_ANALYTICS=$(cat ./outputs/bicep-outputs-$RG.json | jq -r .logAnalyticsName.value)
+
+echo ''
+echo '***************************************************************'
+echo 'Demo successfully deployed'
+echo ''
+echo 'Details:'
+echo ''
+echo 'Resource Group: ' $RG
+echo 'Container Apps Env Domain: ' $CONTAINER_APPS_DOMAIN
+# echo 'Store: ' $STORE_URL
+# echo 'Order API: ' $ORDER_URL
+# echo 'Inventory API: ' $INVENTORY_URL
+# echo 'Log Analytics Name: ' $LOG_ANALYTICS
+echo ''
+echo '***************************************************************'   

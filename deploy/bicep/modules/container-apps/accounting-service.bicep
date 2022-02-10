@@ -3,7 +3,7 @@ param location string
 param sbRootConnectionString string
 param sqlConnectionString string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-02-01' existing = {
+resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
 }
 

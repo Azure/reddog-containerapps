@@ -2,9 +2,10 @@ mkdir -p outputs
 
 # set initial variables
 #export PREFIX=$USER
-export PREFIX='btr'
+export PREFIX='briar'
 export SUFFIX=$RANDOM
-export RG=$PREFIX-reddog-cont-app-$SUFFIX
+export RG=$PREFIX-cont-app-reddog-$SUFFIX
+#export LOCATION='canadacentral'
 export LOCATION='eastus'
 export LOGFILE_NAME="./outputs/${RG}.log"
 
