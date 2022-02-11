@@ -44,7 +44,7 @@ resource ui 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       scale: {
-        minReplicas: 0
+        minReplicas: 1
       }
       dapr: {
         enabled: true

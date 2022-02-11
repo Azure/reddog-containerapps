@@ -19,7 +19,18 @@ resource orderService 'Microsoft.Web/containerApps@2021-03-01' = {
         }
       ]
       scale: {
-        minReplicas: 0
+        minReplicas: 1
+        maxReplicas: 10
+        rules: [
+          {
+            name: 'http-rule'
+            http: {
+              metadata: {
+                  concurrentRequests: '10'
+              }
+            }
+          }
+        ]        
       }
       dapr: {
         enabled: true

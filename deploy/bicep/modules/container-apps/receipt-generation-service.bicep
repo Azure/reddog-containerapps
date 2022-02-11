@@ -30,7 +30,7 @@ resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
               metadata: {
                 topicName: 'orders'
                 subscriptionName: 'receipt-generation-service'
-                messageCount: '10'
+                messageCount: '5'
               }
               auth: [
                 {

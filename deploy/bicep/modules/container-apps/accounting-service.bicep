@@ -35,7 +35,7 @@ resource accountingService 'Microsoft.Web/containerApps@2021-03-01' = {
               metadata: {
                 topicName: 'orders'
                 subscriptionName: 'accounting-service'
-                messageCount: '10'
+                messageCount: '5'
               }
               auth: [
                 {

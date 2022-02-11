@@ -32,7 +32,7 @@ resource loyaltyService 'Microsoft.Web/containerApps@2021-03-01' = {
               metadata: {
                 topicName: 'orders'
                 subscriptionName: 'loyalty-service'
-                messageCount: '10'
+                messageCount: '5'
               }
               auth: [
                 {
