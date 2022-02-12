@@ -48,7 +48,7 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">reddog.proudforest-e0ee9e19.eastus.azurecontainerapps.io</stringProp>
+          <stringProp name="HTTPSampler.domain">reddog.kindpebble-5d9795f7.eastus.azurecontainerapps.io</stringProp>
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
