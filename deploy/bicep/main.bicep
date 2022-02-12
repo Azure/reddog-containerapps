@@ -13,6 +13,7 @@ param sqlServerName string = resourceGroup().name
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
 param sqlAdminLoginPassword string = 'w@lkingth3d0g'
+param inventoryImage string = 'ghcr.io/azure/container-apps-demo/inventory-service:3881e81'
 
 module containerAppsEnvModule 'modules/capps-env.bicep' = {
   name: '${deployment().name}--containerAppsEnv'
@@ -167,6 +168,18 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
   }
 }
 
+module inventoryService 'modules/container-apps/inventory-service.bicep' = {
+  name: 'inventory-service'
+  dependsOn: [
+    containerAppsEnvModule
+  ]  
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
+    inventoryImage: inventoryImage
+  }
+}
+
 module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
   name: '${deployment().name}--virtual-customer'
   dependsOn: [
@@ -208,3 +221,4 @@ module uiModule 'modules/container-apps/ui.bicep' = {
 }
 
 output defaultDomain string = containerAppsEnvModule.outputs.defaultDomain
+output inventoryFqdn string = inventoryService.outputs.fqdn

@@ -51,6 +51,7 @@ echo 'Saving bicep outputs to a file'
 az deployment group show -g $RG -n reddog-deploy -o json --query properties.outputs > "./outputs/bicep-outputs-$RG.json"
 
 export CONTAINER_APPS_DOMAIN=$(cat ./outputs/bicep-outputs-$RG.json | jq -r .defaultDomain.value)
+export INVENTORY_URL="https://"$(cat ./outputs/bicep-outputs-$RG.json | jq -r .inventoryFqdn.value)
 export UI="https://reddog."$CONTAINER_APPS_DOMAIN
 export PRODUCT="https://reddog."$CONTAINER_APPS_DOMAIN"/product"
 export MAKELINE="https://reddog."$CONTAINER_APPS_DOMAIN"/makeline/orders/Denver"
@@ -70,5 +71,6 @@ echo 'Product: ' $PRODUCT
 echo 'MakeLine orders: ' $MAKELINE
 echo 'Accounting order metrics: '$ACCOUNTING_ORDERMETRICS
 echo 'Order: ' $ORDER
+echo 'Inventory: ' $INVENTORY_URL
 echo ''
 echo '***************************************************************' 
