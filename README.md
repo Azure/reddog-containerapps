@@ -27,10 +27,6 @@ This repo contains the scripts and configurations to deploy the Red Dog Demo alo
 
 > The `cleanup.sh` script will remove local log files and certs, but it does not delete the Resource Group.
 
-
-
-Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
-
 ## Infrastructure Components
 
 #### Resource Group
@@ -54,9 +50,6 @@ A member of the Azure SQL family, Azure SQL supports modern cloud applications o
 #### Azure Blob Storage 
 Azuree Blob storage is optimized for storing massive amounts of unstructured data. Unstructured data is data that doesn't adhere to a particular data model or definition, such as text or binary data. Blob storage is used by the Receipt Service via Dapr Output Bindings to store order receipts.
 
-#### Traefik 
-Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
-
 ## Container Apps 
 
 For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
@@ -73,7 +66,9 @@ For insight into the various microservices and their functionality, visit the Re
 | Virtual Worker | None | Binding: Cron | n/a |
 | Virtual Customer | None | Service to Service | n/a |
 
-*A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
+
+* Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
+* A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
 
 ## Contributing
 
