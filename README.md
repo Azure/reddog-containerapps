@@ -16,7 +16,22 @@ The architecture is comprised of a single Container Apps Environment that hosts 
 
 This repository leverages bicep templates in order to execute the deployment of the Reddog applicaton and the supporting Azure Infrastructure. Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively and provides a transparent abstraction over ARM and ARM templates.  
 
-### Infrastructure Components
+## Getting Started
+
+This repo contains the scripts and configurations to deploy the Red Dog Demo along with the backing Azure Resources. Here's how to get started:
+
+* If you plan to make any code changes or contribute, we suggest you fork the repo first
+* You can run this in GitHub Codespaces, Azure Cloud Shell, or you local machine. Be sure to update the Azure CLI and Bicep
+* Edit the `config.json` file based on the example in the repo and update the Location and Prefix (username)
+* Execute the `start.sh` deployment script.
+
+> The `cleanup.sh` script will remove local log files and certs, but it does not delete the Resource Group.
+
+
+
+Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
+
+## Infrastructure Components
 
 #### Resource Group
 A logical container which holds all resources needed to run the above solution in Azure
@@ -39,11 +54,12 @@ A member of the Azure SQL family, Azure SQL supports modern cloud applications o
 #### Azure Blob Storage 
 Azuree Blob storage is optimized for storing massive amounts of unstructured data. Unstructured data is data that doesn't adhere to a particular data model or definition, such as text or binary data. Blob storage is used by the Receipt Service via Dapr Output Bindings to store order receipts.
 
-### Container Apps 
-
-For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
 #### Traefik 
 Traefik is a leading modern reverse proxy and load balancer that makes deploying microservices easy. Traefik integrates with your existing infrastructure components and configures itself automatically and dynamically. Container Apps currently makes use of Traefik's dynamic configuration feature in order to do path-based routing from the SPA UI as well as to enable direct calls via the rest samples
+
+## Container Apps 
+
+For insight into the various microservices and their functionality, visit the Red Dog Demo [codebase repo](https://github.com/Azure/reddog-code). This repository, however, contains an additional component that is needed to get the solution up and running on the Container Apps platform. 
 
 | Service          | Ingress |  Dapr Component(s) | KEDA Scale Rule(s) |
 |------------------|---------|--------------------|--------------------|
@@ -58,10 +74,6 @@ Traefik is a leading modern reverse proxy and load balancer that makes deploying
 | Virtual Customer | None | Service to Service | n/a |
 
 *A tenth service, Bootstrapper, will also be executed. However, this service is run once to perform EF Core Migration and is subsequently scaled to 0 after completing the necessary scaffolding.
-
-## Getting Started
-
-This repo contains the scripts and configurations to deploy the Red Dog Demo along with the backing Azure Resources. Simply clone the repo and execute the `run.sh` deployment script. Further details will be added soon.
 
 ## Contributing
 
