@@ -1,6 +1,13 @@
 export RG=$1
 export LOCATION=$2
 export SUFFIX=$3
+export USERNAME=$4
+
+# set additional params
+export UNIQUE_SERVICE_NAME=reddog$RANDOM$USERNAME$SUFFIX
+
+# unique in RG: app insights, container app env, log analytics
+# must be unique: storage (24), service bus, redis, cosmos (44), sql (63)
 
 # show all params
 echo '***************************************************************'
@@ -9,6 +16,8 @@ echo ''
 echo 'Parameters:'
 echo 'LOCATION: ' $LOCATION
 echo 'RG: ' $RG
+echo 'USER: ' $USER
+echo 'UNIQUE NAME: ' $UNIQUE_SERVICE_NAME
 echo 'LOGFILE_NAME: ' $LOGFILE_NAME
 echo '***************************************************************'
 echo ''
@@ -43,6 +52,12 @@ az deployment group create \
     --name reddog-deploy \
     --resource-group $RG \
     --only-show-errors \
+    --parameters storageAccountName="$UNIQUE_SERVICE_NAME" \
+    --parameters serviceBusNamespaceName="$UNIQUE_SERVICE_NAME" \
+    --parameters redisName="$UNIQUE_SERVICE_NAME" \
+    --parameters cosmosAccountName="$UNIQUE_SERVICE_NAME" \
+    --parameters sqlServerName="$UNIQUE_SERVICE_NAME" \
+    --parameters logAnalyticsWorkspaceName="$UNIQUE_SERVICE_NAME" \
     --template-file ./deploy/bicep/main.bicep
 
 # Deployment outputs
