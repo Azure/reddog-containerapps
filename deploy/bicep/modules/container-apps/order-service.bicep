@@ -1,9 +1,13 @@
 param containerAppsEnvName string
 param location string
-param sbRootConnectionString string
+param serviceBusNamespaceName string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
+}
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+  name: serviceBusNamespaceName
 }
 
 resource orderService 'Microsoft.Web/containerApps@2021-03-01' = {
@@ -48,7 +52,7 @@ resource orderService 'Microsoft.Web/containerApps@2021-03-01' = {
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: sbRootConnectionString
+          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
         }
       ]
     }

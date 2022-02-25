@@ -1,38 +1,23 @@
-targetScope = 'subscription'
-
-param location string = deployment().location
-param uniqueSeed string = '${subscription().subscriptionId}-${deployment().name}'
-param resourceGroupName string = 'reddog-${uniqueString(uniqueSeed)}'
-param containerAppsEnvName string = resourceGroupName
-param logAnalyticsWorkspaceName string = resourceGroupName
-param appInsightsName string = resourceGroupName
-param serviceBusNamespaceName string = resourceGroupName
-param redisName string = resourceGroupName
-param cosmosAccountName string = resourceGroupName
-param cosmosDatabaseName string = 'daprworkshop'
+param location string = resourceGroup().location
+param uniqueSeed string = '${subscription().subscriptionId}-${resourceGroup().name}'
+param uniqueSuffix string = 'reddog-${uniqueString(uniqueSeed)}'
+param containerAppsEnvName string = 'cae-${uniqueSuffix}'
+param logAnalyticsWorkspaceName string = 'log-${uniqueSuffix}'
+param appInsightsName string = 'appi-${uniqueSuffix}'
+param serviceBusNamespaceName string = 'sb-${uniqueSuffix}'
+param redisName string = 'redis-${uniqueSuffix}'
+param cosmosAccountName string = 'cosmos-${uniqueSuffix}'
+param cosmosDatabaseName string = 'reddog'
 param cosmosCollectionName string = 'loyalty'
-param storageAccountName string = replace(resourceGroupName, '-', '')
+param storageAccountName string = 'st${replace(uniqueSuffix, '-', '')}'
 param blobContainerName string = 'receipts'
-param sqlServerName string = resourceGroupName
+param sqlServerName string = 'sql-${uniqueSuffix}'
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
-param sqlAdminLoginPassword string = 'w@lkingth3d0g'
-
-module resourceGroupModule 'modules/resource-group.bicep' = {
-  name: '${deployment().name}--resourceGroup'
-  scope: subscription()
-  params: {
-    location: location
-    resourceGroupName: resourceGroupName
-  }
-}
+param sqlAdminLoginPassword string = take(newGuid(), 16)
 
 module containerAppsEnvModule 'modules/capps-env.bicep' = {
   name: '${deployment().name}--containerAppsEnv'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    resourceGroupModule
-  ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
@@ -43,10 +28,6 @@ module containerAppsEnvModule 'modules/capps-env.bicep' = {
 
 module serviceBusModule 'modules/servicebus.bicep' = {
   name: '${deployment().name}--servicebus'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    resourceGroupModule
-  ]
   params: {
     serviceBusNamespaceName: serviceBusNamespaceName
     location: location
@@ -55,10 +36,6 @@ module serviceBusModule 'modules/servicebus.bicep' = {
 
 module redisModule 'modules/redis.bicep' = {
   name: '${deployment().name}--redis'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    resourceGroupModule
-  ]
   params: {
     redisName: redisName
     location: location
@@ -67,10 +44,6 @@ module redisModule 'modules/redis.bicep' = {
 
 module cosmosModule 'modules/cosmos.bicep' = {
   name: '${deployment().name}--cosmos'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    resourceGroupModule
-  ]
   params: {
     cosmosAccountName: cosmosAccountName
     cosmosDatabaseName: cosmosDatabaseName
@@ -81,10 +54,6 @@ module cosmosModule 'modules/cosmos.bicep' = {
 
 module storageModule 'modules/storage.bicep' = {
   name: '${deployment().name}--storage'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    resourceGroupModule
-  ]
   params: {
     storageAccountName: storageAccountName
     blobContainerName: blobContainerName
@@ -94,10 +63,6 @@ module storageModule 'modules/storage.bicep' = {
 
 module sqlServerModule 'modules/sqlserver.bicep' = {
   name: '${deployment().name}--sqlserver'
-  scope: resourceGroup(resourceGroupName)
-  dependsOn: [
-    resourceGroupModule
-  ]
   params: {
     sqlServerName: sqlServerName
     sqlDatabaseName: sqlDatabaseName
@@ -109,68 +74,66 @@ module sqlServerModule 'modules/sqlserver.bicep' = {
 
 module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   name: '${deployment().name}--order-service'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    serviceBusModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
+    serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
 
 module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = {
   name: '${deployment().name}--make-line-service'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    serviceBusModule
+    redisModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
-    redisHost: redisModule.outputs.redisHost
-    redisSslPort: redisModule.outputs.redisSslPort
-    redisPassword: redisModule.outputs.redisPassword
+    serviceBusNamespaceName: serviceBusNamespaceName
+    redisName: redisName
   }
 }
 
 module loyaltyServiceModule 'modules/container-apps/loyalty-service.bicep' = {
   name: '${deployment().name}--loyalty-service'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    serviceBusModule
+    cosmosModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
+    serviceBusNamespaceName: serviceBusNamespaceName
+    cosmosAccountName: cosmosAccountName
     cosmosDatabaseName: cosmosDatabaseName
     cosmosCollectionName: cosmosCollectionName
-    cosmosUrl: cosmosModule.outputs.cosmosUri
-    cosmosPrimaryKey: cosmosModule.outputs.cosmosPrimaryKey
   }
 }
 
 module receiptGenerationServiceModule 'modules/container-apps/receipt-generation-service.bicep' = {
   name: '${deployment().name}--receipt-generation-service'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    serviceBusModule
+    storageModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
+    serviceBusNamespaceName: serviceBusNamespaceName
     storageAccountName: storageAccountName
-    blobStorageKey: storageModule.outputs.accessKey
   }
 }
 
 module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   name: '${deployment().name}--virtual-worker'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
     makeLineServiceModule
@@ -183,36 +146,42 @@ module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
 
 module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   name: '${deployment().name}--bootstrapper'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    sqlServerModule
     orderServiceModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    sqlConnectionString: sqlServerModule.outputs.sqlConnectionString
+    sqlDatabaseName: sqlDatabaseName
+    sqlServerName: sqlServerName
+    sqlAdminLogin: sqlAdminLogin
+    sqlAdminLoginPassword: sqlAdminLoginPassword
   }
 }
 
 module accountingServiceModule 'modules/container-apps/accounting-service.bicep' = {
   name: '${deployment().name}--accounting-service'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
+    serviceBusModule
+    sqlServerModule
     bootstrapperModule
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    sbRootConnectionString: serviceBusModule.outputs.rootConnectionString
-    sqlConnectionString: sqlServerModule.outputs.sqlConnectionString
+    serviceBusNamespaceName: serviceBusNamespaceName
+    sqlServerName: sqlServerName
+    sqlDatabaseName: sqlDatabaseName
+    sqlAdminLogin: sqlAdminLogin
+    sqlAdminLoginPassword: sqlAdminLoginPassword
   }
 }
 
 module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
   name: '${deployment().name}--virtual-customer'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
     orderServiceModule
@@ -229,7 +198,6 @@ module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
 
 module traefikModule 'modules/container-apps/traefik.bicep' = {
   name: '${deployment().name}--traefik'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
   ]
@@ -241,7 +209,6 @@ module traefikModule 'modules/container-apps/traefik.bicep' = {
 
 module uiModule 'modules/container-apps/ui.bicep' = {
   name: '${deployment().name}--ui'
-  scope: resourceGroup(resourceGroupName)
   dependsOn: [
     containerAppsEnvModule
     makeLineServiceModule
@@ -252,3 +219,10 @@ module uiModule 'modules/container-apps/ui.bicep' = {
     containerAppsEnvName: containerAppsEnvName
   }
 }
+
+output urls array = [
+  'UI: https://reddog.${containerAppsEnvModule.outputs.defaultDomain}'
+  'Product: https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/product'
+  'Makeline Orders (Redmond): https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/makeline/orders/Redmond'
+  'Accounting Order Metrics (Redmond): https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/accounting/OrderMetrics?StoreId=Redmond'
+]

@@ -13,7 +13,3 @@ resource redis 'Microsoft.Cache/redis@2020-12-01' = {
     enableNonSslPort: false
   }
 }
-
-output redisHost string = redis.properties.hostName
-output redisSslPort int = redis.properties.sslPort
-output redisPassword string = listKeys(redis.id, redis.apiVersion).primaryKey

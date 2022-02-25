@@ -20,5 +20,3 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
   parent: blobService
   name: blobContainerName
 }
-
-output accessKey string = listkeys(storageAccount.id, storageAccount.apiVersion).keys[0].value
