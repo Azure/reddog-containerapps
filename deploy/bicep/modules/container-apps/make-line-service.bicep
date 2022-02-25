@@ -1,12 +1,18 @@
 param containerAppsEnvName string
 param location string
-param sbRootConnectionString string
-param redisHost string
-param redisSslPort int
-param redisPassword string
+param serviceBusNamespaceName string
+param redisName string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
+}
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+  name: serviceBusNamespaceName
+}
+
+resource redis 'Microsoft.Cache/redis@2020-12-01' existing = {
+  name: redisName
 }
 
 resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
@@ -74,7 +80,7 @@ resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
             metadata: [
               {
                 name: 'redisHost'
-                value: '${redisHost}:${redisSslPort}'
+                value: '${redis.properties.hostName}:${redis.properties.sslPort}'
               }
               {
                 name: 'redisPassword'
@@ -97,11 +103,11 @@ resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: sbRootConnectionString
+          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
         }
         {
           name: 'redis-password'
-          value: redisPassword
+          value: listKeys(redis.id, redis.apiVersion).primaryKey
         }
       ]
     }

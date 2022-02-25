@@ -1,10 +1,19 @@
 param containerAppsEnvName string
 param location string
-param sbRootConnectionString string
-param sqlConnectionString string
+param serviceBusNamespaceName string
+param sqlServerName string
+param sqlDatabaseName string
+param sqlAdminLogin string
+param sqlAdminLoginPassword string
+//param sbRootConnectionString string
+//param sqlConnectionString string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
+}
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+  name: serviceBusNamespaceName
 }
 
 resource accountingService 'Microsoft.Web/containerApps@2021-03-01' = {
@@ -82,11 +91,11 @@ resource accountingService 'Microsoft.Web/containerApps@2021-03-01' = {
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: sbRootConnectionString
+          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
         }
         {
           name: 'reddog-sql'
-          value: sqlConnectionString
+          value: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
       ]
     }

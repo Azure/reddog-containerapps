@@ -1,6 +1,9 @@
 param containerAppsEnvName string
 param location string
-param sqlConnectionString string
+param sqlServerName string
+param sqlDatabaseName string
+param sqlAdminLogin string
+param sqlAdminLoginPassword string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
@@ -36,7 +39,7 @@ resource bootstrapper 'Microsoft.Web/containerApps@2021-03-01' = {
       secrets: [
         {
           name: 'reddog-sql'
-          value: sqlConnectionString
+          value: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
       ]
     }

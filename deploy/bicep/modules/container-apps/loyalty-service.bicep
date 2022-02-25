@@ -1,13 +1,20 @@
 param containerAppsEnvName string
 param location string
-param sbRootConnectionString string
-param cosmosUrl string
+param serviceBusNamespaceName string
+param cosmosAccountName string
 param cosmosDatabaseName string
 param cosmosCollectionName string
-param cosmosPrimaryKey string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
+}
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+  name: serviceBusNamespaceName
+}
+
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2021-06-15' existing = {
+  name: cosmosAccountName
 }
 
 resource loyaltyService 'Microsoft.Web/containerApps@2021-03-01' = {
@@ -67,17 +74,14 @@ resource loyaltyService 'Microsoft.Web/containerApps@2021-03-01' = {
             metadata: [
               {
                 name: 'url'
-                // value: 'https://vigilantescosmosdb.documents.azure.com:443/'
-                value: cosmosUrl
+                value: 'https://${cosmosAccountName}.documents.azure.com:443/'
               }
               {
                 name: 'database'
-                // value: 'daprworkshop'
                 value: cosmosDatabaseName
               }
               {
                 name: 'collection'
-                // value: 'loyalty'
                 value: cosmosCollectionName
               }
               {
@@ -97,11 +101,11 @@ resource loyaltyService 'Microsoft.Web/containerApps@2021-03-01' = {
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: sbRootConnectionString
+          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
         }
         {
           name: 'cosmos-primary-rw-key'
-          value: cosmosPrimaryKey
+          value: listkeys(cosmosAccount.id, cosmosAccount.apiVersion).primaryMasterKey
         }
       ]
     }
