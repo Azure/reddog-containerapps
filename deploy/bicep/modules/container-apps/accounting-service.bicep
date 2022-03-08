@@ -5,10 +5,8 @@ param sqlServerName string
 param sqlDatabaseName string
 param sqlAdminLogin string
 param sqlAdminLoginPassword string
-//param sbRootConnectionString string
-//param sqlConnectionString string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
@@ -68,19 +66,6 @@ resource accountingService 'Microsoft.Web/containerApps@2021-03-01' = {
         enabled: true
         appId: 'accounting-service'
         appPort: 80
-        components: [
-          {
-            name: 'reddog.pubsub'
-            type: 'pubsub.azure.servicebus'
-            version: 'v1'
-            metadata: [
-              {
-                name: 'connectionString'
-                secretRef: 'sb-root-connectionstring'
-              }
-            ]
-          }
-        ]
       }
     }
     configuration: {

@@ -1,18 +1,13 @@
 param containerAppsEnvName string
 param location string
 param serviceBusNamespaceName string
-param redisName string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
 resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
   name: serviceBusNamespaceName
-}
-
-resource redis 'Microsoft.Cache/redis@2020-12-01' existing = {
-  name: redisName
 }
 
 resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
@@ -61,38 +56,6 @@ resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
         enabled: true
         appId: 'make-line-service'
         appPort: 80
-        components: [
-          {
-            name: 'reddog.pubsub'
-            type: 'pubsub.azure.servicebus'
-            version: 'v1'
-            metadata: [
-              {
-                name: 'connectionString'
-                secretRef: 'sb-root-connectionstring'
-              }
-            ]
-          }
-          {
-            name: 'reddog.state.makeline'
-            type: 'state.redis'
-            version: 'v1'
-            metadata: [
-              {
-                name: 'redisHost'
-                value: '${redis.properties.hostName}:${redis.properties.sslPort}'
-              }
-              {
-                name: 'redisPassword'
-                secretRef: 'redis-password'
-              }
-              {
-                name: 'enableTLS'
-                value: 'true'
-              }
-            ]
-          }
-        ]
       }
     }
     configuration: {
@@ -104,10 +67,6 @@ resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
         {
           name: 'sb-root-connectionstring'
           value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
-        }
-        {
-          name: 'redis-password'
-          value: listKeys(redis.id, redis.apiVersion).primaryKey
         }
       ]
     }
