@@ -44,13 +44,13 @@ resource receiptGenerationService 'Microsoft.App/containerApps@2022-01-01-previe
           }
         ]
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'receipt-generation-service'
         appPort: 80
       }
-    }
-    configuration: {
       ingress: {
         external: false
         targetPort: 80

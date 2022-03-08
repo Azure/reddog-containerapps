@@ -46,12 +46,12 @@ resource ui 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 0
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'ui'
       }
-    }
-    configuration: {
       ingress: {
         external: false
         targetPort: 8080

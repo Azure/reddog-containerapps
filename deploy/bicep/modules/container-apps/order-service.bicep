@@ -20,13 +20,13 @@ resource orderService 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 0
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'order-service'
         appPort: 80
       }
-    }
-    configuration: {
       ingress: {
         external: false
         targetPort: 80

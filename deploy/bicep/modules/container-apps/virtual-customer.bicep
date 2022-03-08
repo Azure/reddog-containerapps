@@ -20,6 +20,8 @@ resource virtualCustomers 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 1
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'virtual-customers'

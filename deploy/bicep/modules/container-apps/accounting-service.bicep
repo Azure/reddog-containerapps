@@ -62,13 +62,13 @@ resource accountingService 'Microsoft.App/containerApps@2022-01-01-preview' = {
           }
         ]
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'accounting-service'
         appPort: 80
       }
-    }
-    configuration: {
       ingress: {
         external: false
         targetPort: 80

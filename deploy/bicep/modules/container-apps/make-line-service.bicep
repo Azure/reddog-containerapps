@@ -52,13 +52,13 @@ resource makeLineService 'Microsoft.App/containerApps@2022-01-01-preview' = {
           }
         ]
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'make-line-service'
         appPort: 80
       }
-    }
-    configuration: {
       ingress: {
         external: false
         targetPort: 80

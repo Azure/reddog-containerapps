@@ -44,13 +44,13 @@ resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
           }
         ]
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'loyalty-service'
         appPort: 80
       }
-    }
-    configuration: {
       ingress: {
         external: false
         targetPort: 80
