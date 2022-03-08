@@ -5,11 +5,11 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existin
   name: containerAppsEnvName
 }
 
-resource orderService 'Microsoft.Web/containerApps@2021-03-01' = {
+resource orderService 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'order-service'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {

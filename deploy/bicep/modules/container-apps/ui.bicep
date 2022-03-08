@@ -5,11 +5,11 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existin
   name: containerAppsEnvName
 }
 
-resource ui 'Microsoft.Web/containerApps@2021-03-01' = {
+resource ui 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'ui'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {
