@@ -12,7 +12,7 @@ This repository leverages the [reddog applicaton codebase](https://github.com/Az
 
 The architecture is comprised of a single Container Apps Environment that hosts ten respective Container Apps. While Dapr provides flexibility around the specific component implementations leveraged for the various building blocks, this demo is opinionated. There are also a few services that make use of KEDA scale rules. 
 
-![Architecture diagram](assets/reddog_containerapps.png)
+![Architecture diagram](assets/reddog-containerapps.png)
 
 This repository leverages bicep templates in order to execute the deployment of the Reddog applicaton and the supporting Azure Infrastructure. Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively and provides a transparent abstraction over ARM and ARM templates.  
 
