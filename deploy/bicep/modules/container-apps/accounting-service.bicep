@@ -5,8 +5,6 @@ param sqlServerName string
 param sqlDatabaseName string
 param sqlAdminLogin string
 param sqlAdminLoginPassword string
-//param sbRootConnectionString string
-//param sqlConnectionString string
 
 resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
   name: containerAppsEnvName
