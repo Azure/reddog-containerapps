@@ -30,10 +30,10 @@ Traefik is a leading reverse proxy and load balancer that integrates with your e
 | UI | Internal | Dapr not enabled | HTTP |
 | Virtual Customer | None | Service to Service Invocation | N/A |
 | Order Service | Internal | PubSub: Azure Service Bus | HTTP |
-| Accounting Service | Internal | PubSub: Azure Service Bus | Azure Service Bus Topic Length, HTTP |
-| Receipt Service | Internal | PubSub: Azure Service Bus, Binding: Azure Blob | Azure Service Bus Topic Length |
-| Loyalty Service | Internal | PubSub: Azure Service Bus, State: Azure Cosmos DB | Azure Service Bus Topic Length |
-| Makeline Service | Internal | PubSub: Azure Service Bus, State: Azure Redis | Azure Service Bus Topic Length, HTTP |
+| Accounting Service | Internal | PubSub: Azure Service Bus | Azure Service Bus Subscription Length, HTTP |
+| Receipt Service | Internal | PubSub: Azure Service Bus, Binding: Azure Blob | Azure Service Bus Subscription Length |
+| Loyalty Service | Internal | PubSub: Azure Service Bus, State: Azure Cosmos DB | Azure Service Bus Subscription Length |
+| Makeline Service | Internal | PubSub: Azure Service Bus, State: Azure Redis | Azure Service Bus Subscription Length, HTTP |
 | Virtual Worker | None | Service to Service Invocation, Binding: Cron | N/A |
 
 >A tenth service, Bootstrapper is also executed in a Container App. This service is run once to perform the database creation and is subsequently scaled to 0 after creating the necessary objects in Azure SQL Database.
