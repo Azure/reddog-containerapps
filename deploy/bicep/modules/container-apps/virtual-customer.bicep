@@ -25,6 +25,7 @@ resource virtualCustomers 'Microsoft.App/containerApps@2022-01-01-preview' = {
       dapr: {
         enabled: true
         appId: 'virtual-customers'
+        appProtocol: 'http'
       }
     }
   }

@@ -35,6 +35,7 @@ resource bootstrapper 'Microsoft.App/containerApps@2022-01-01-preview' = {
       dapr: {
         enabled: true
         appId: 'bootstrapper'
+        appProtocol: 'http'
       }
       secrets: [
         {

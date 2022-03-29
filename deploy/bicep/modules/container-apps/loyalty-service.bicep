@@ -50,6 +50,7 @@ resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
         enabled: true
         appId: 'loyalty-service'
         appPort: 80
+        appProtocol: 'http'
       }
       ingress: {
         external: false

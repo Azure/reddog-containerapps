@@ -25,6 +25,7 @@ resource traefik 'Microsoft.App/containerApps@2022-01-01-preview' = {
       dapr: {
         enabled: true
         appId: 'traefik'
+        appProtocol: 'http'
       }
       ingress: {
         external: true

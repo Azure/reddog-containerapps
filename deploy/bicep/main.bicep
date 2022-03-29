@@ -84,8 +84,8 @@ module daprBindingReceipt 'modules/dapr-components/binding-receipt.bicep' = {
   }
 }
 
-module daprCronOrders 'modules/dapr-components/cron-orders.bicep' = {
-  name: '${deployment().name}--dapr-cron-orders'
+module daprBindingVirtualWorker 'modules/dapr-components/binding-virtualworker.bicep' = {
+  name: '${deployment().name}--dapr-binding-virtualworker'
   dependsOn: [
     containerAppsEnvModule
   ]
@@ -137,6 +137,7 @@ module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
+    daprPubsub
   ]
   params: {
     location: location
@@ -150,6 +151,8 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
     containerAppsEnvModule
     serviceBusModule
     redisModule
+    daprPubsub
+    daprStateMakeline
   ]
   params: {
     location: location
@@ -163,6 +166,8 @@ module loyaltyServiceModule 'modules/container-apps/loyalty-service.bicep' = {
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
+    daprPubsub
+    daprStateLoyalty
   ]
   params: {
     location: location
@@ -176,6 +181,8 @@ module receiptGenerationServiceModule 'modules/container-apps/receipt-generation
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
+    daprBindingReceipt
+    daprPubsub
   ]
   params: {
     location: location
@@ -189,6 +196,7 @@ module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   dependsOn: [
     containerAppsEnvModule
     makeLineServiceModule
+    daprBindingVirtualWorker
   ]
   params: {
     location: location
@@ -220,6 +228,7 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
     serviceBusModule
     sqlServerModule
     bootstrapperModule
+    daprPubsub
   ]
   params: {
     location: location

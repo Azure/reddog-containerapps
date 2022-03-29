@@ -51,6 +51,7 @@ resource ui 'Microsoft.App/containerApps@2022-01-01-preview' = {
       dapr: {
         enabled: true
         appId: 'ui'
+        appProtocol: 'http'
       }
       ingress: {
         external: false

@@ -36,6 +36,7 @@ resource virtualWorker 'Microsoft.App/containerApps@2022-01-01-preview' = {
         enabled: true
         appId: 'virtual-worker'
         appPort: 80
+        appProtocol: 'http'
       }
       ingress: {
         external: false
