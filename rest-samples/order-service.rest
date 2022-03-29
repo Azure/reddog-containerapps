@@ -1,4 +1,4 @@
-@order-service = reddog.proudpebble-f0d0d779.canadacentral.azurecontainerapps.io
+@order-service = reddog.whitebush-a2e52ffc.eastus2.azurecontainerapps.io
 @storeId = Redmond
 
 ### Create an order via order-service POST
