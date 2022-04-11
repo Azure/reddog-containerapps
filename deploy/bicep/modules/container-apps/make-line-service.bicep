@@ -3,7 +3,7 @@ param location string
 param serviceBusNamespaceName string
 param redisName string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
@@ -15,11 +15,11 @@ resource redis 'Microsoft.Cache/redis@2020-12-01' existing = {
   name: redisName
 }
 
-resource makeLineService 'Microsoft.Web/containerApps@2021-03-01' = {
+resource makeLineService 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'make-line-service'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {

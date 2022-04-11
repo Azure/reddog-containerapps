@@ -5,7 +5,7 @@ param cosmosAccountName string
 param cosmosDatabaseName string
 param cosmosCollectionName string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
@@ -17,11 +17,11 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2021-06-15' existi
   name: cosmosAccountName
 }
 
-resource loyaltyService 'Microsoft.Web/containerApps@2021-03-01' = {
+resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'loyalty-service'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {

@@ -3,7 +3,7 @@ param location string
 param serviceBusNamespaceName string
 param storageAccountName string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
@@ -15,11 +15,11 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' existing 
   name: storageAccountName
 }
 
-resource receiptGenerationService 'Microsoft.Web/containerApps@2021-03-01' = {
+resource receiptGenerationService 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'receipt-generation-service'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {
