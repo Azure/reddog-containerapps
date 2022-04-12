@@ -30,10 +30,7 @@ resource bootstrapper 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 0
       }
-      dapr: {
-        enabled: true
-        appId: 'bootstrapper'
-      }
+
     }
     configuration: {
       secrets: [
@@ -42,6 +39,10 @@ resource bootstrapper 'Microsoft.App/containerApps@2022-01-01-preview' = {
           value: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
       ]
+      dapr: {
+        enabled: true
+        appId: 'bootstrapper'
+      }
     }
   }
 }

@@ -30,29 +30,16 @@ resource virtualWorker 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 1
       }
-      dapr: {
-        enabled: true
-        appId: 'virtual-worker'
-        appPort: 80
-        components: [
-          {
-            name: 'orders'
-            type: 'bindings.cron'
-            version: 'v1'
-            metadata: [
-              {
-                name: 'schedule'
-                value: '@every 15s'
-              }
-            ]
-          }
-        ]
-      }
     }
     configuration: {
       ingress: {
         external: false
         targetPort: 80
+      }
+      dapr: {
+        enabled: true
+        appId: 'virtual-worker'
+        appPort: 80
       }
     }
   }

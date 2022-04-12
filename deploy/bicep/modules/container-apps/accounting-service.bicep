@@ -62,24 +62,6 @@ resource accountingService 'Microsoft.App/containerApps@2022-01-01-preview' = {
           }
         ]
       }
-      dapr: {
-        enabled: true
-        appId: 'accounting-service'
-        appPort: 80
-        components: [
-          {
-            name: 'reddog.pubsub'
-            type: 'pubsub.azure.servicebus'
-            version: 'v1'
-            metadata: [
-              {
-                name: 'connectionString'
-                secretRef: 'sb-root-connectionstring'
-              }
-            ]
-          }
-        ]
-      }
     }
     configuration: {
       ingress: {
@@ -96,6 +78,11 @@ resource accountingService 'Microsoft.App/containerApps@2022-01-01-preview' = {
           value: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
       ]
+      dapr: {
+        enabled: true
+        appId: 'accounting-service'
+        appPort: 80
+      }
     }
   }
 }

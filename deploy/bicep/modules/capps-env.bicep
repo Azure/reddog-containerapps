@@ -30,17 +30,13 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview'
   name: containerAppsEnvName
   location: location
   properties: {
-    type: 'managed'
-    internalLoadBalancerEnabled: false
+    daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
         customerId: logAnalyticsWorkspace.properties.customerId
         sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
       }
-    }
-    containerAppsConfiguration: {
-      daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     }
   }
 }

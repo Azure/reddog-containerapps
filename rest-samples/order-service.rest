@@ -1,13 +1,10 @@
-@order-service = reddog.whitebush-a2e52ffc.eastus2.azurecontainerapps.io
-@storeId = Redmond
-
 ### Create an order via order-service POST
-POST https://{{order-service}}/order
+POST https://reddog.icydesert-8a2d7e99.eastus2.azurecontainerapps.io/order
 Content-Type: application/json
  
 {
-    "storeId": "{{storeId}}",
-    "customerName": "John 'Hannibal' Smith",
+    "storeId": "Redmond",
+    "customerName": "John Smith",
     "loyaltyId": "42",
     "orderItems": [
         {

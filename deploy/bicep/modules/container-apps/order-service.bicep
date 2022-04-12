@@ -25,24 +25,6 @@ resource orderService 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 0
       }
-      dapr: {
-        enabled: true
-        appId: 'order-service'
-        appPort: 80
-        components: [
-          {
-            name: 'reddog.pubsub'
-            type: 'pubsub.azure.servicebus'
-            version: 'v1'
-            metadata: [
-              {
-                name: 'connectionString'
-                secretRef: 'sb-root-connectionstring'
-              }
-            ]
-          }
-        ]
-      }
     }
     configuration: {
       ingress: {
@@ -55,6 +37,11 @@ resource orderService 'Microsoft.App/containerApps@2022-01-01-preview' = {
           value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
         }
       ]
+      dapr: {
+        enabled: true
+        appId: 'order-service'
+        appPort: 80
+      }
     }
   }
 }

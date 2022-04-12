@@ -20,15 +20,15 @@ resource traefik 'Microsoft.App/containerApps@2022-01-01-preview' = {
       scale: {
         minReplicas: 0
       }
-      dapr: {
-        enabled: true
-        appId: 'traefik'
-      }
     }
     configuration: {
       ingress: {
         external: true
         targetPort: 80
+      }
+      dapr: {
+        enabled: true
+        appId: 'traefik'
       }
     }
   }
