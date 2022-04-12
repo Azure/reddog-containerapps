@@ -40,6 +40,7 @@ resource pubsub 'Microsoft.App/managedEnvironments/daprComponents@2022-01-01-pre
     ]
     scopes: [
       'virtual-worker'
+      'accounting-service'
       'loyalty-service'
       'make-line-service'
       'order-service'
