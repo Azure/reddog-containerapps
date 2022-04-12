@@ -113,6 +113,7 @@ resource redisDaprComponent 'Microsoft.App/managedEnvironments/daprComponents@20
     ]
     scopes: [
       'make-line-service'
+      'virtual-workers'
     ]
     secrets: [
       {
@@ -168,7 +169,7 @@ resource orders 'Microsoft.App/managedEnvironments/daprComponents@2022-01-01-pre
       }
     ]
     scopes: [
-      'virtual-worker'
+      'virtual-customers'
     ]
   }
 }
