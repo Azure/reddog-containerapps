@@ -144,7 +144,7 @@ resource receipt 'Microsoft.App/managedEnvironments/daprComponents@2022-01-01-pr
       }
     ]
     scopes: [
-      'reddog.binding.receipt'
+      'receipt-generation-service'
     ]
     secrets: [
       {
