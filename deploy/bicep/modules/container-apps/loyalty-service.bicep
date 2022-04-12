@@ -55,6 +55,12 @@ resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
         appId: 'loyalty-service'
         appPort: 80
       }
+      secrets: [
+        {
+          name: 'sb-root-connectionstring'
+          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
+        }
+      ]
     }
   }
 }
