@@ -26,14 +26,12 @@ module containerAppsEnvModule 'modules/capps-env.bicep' = {
   }
 }
 
-module containerAppsDaprModule 'modules/capps-dapr.bicep' = {
-  name: '${deployment().name}--containerAppsDapr'
+module cosmosDaprModule 'modules/dapr-components/dapr-cosmos-state.bicep' = {
+  name: '${deployment().name}--daprCosmosComponent'
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
-    redisModule
     cosmosModule
-    storageModule
   ]
   params: {
     containerAppsEnvName:     containerAppsEnvName
@@ -41,7 +39,55 @@ module containerAppsDaprModule 'modules/capps-dapr.bicep' = {
     cosmosAccountName:        cosmosAccountName
     cosmosDatabaseName:       cosmosDatabaseName
     cosmosCollectionName:     cosmosCollectionName
+  }
+}
+
+module cronDaprModule 'modules/dapr-components/dapr-cron.bicep' = {
+  name: '${deployment().name}--cronDaprComponent'
+  dependsOn: [
+    containerAppsEnvModule
+  ]
+  params: {
+    containerAppsEnvName:     containerAppsEnvName
+  }
+}
+
+module pubsbDaprModule 'modules/dapr-components/dapr-pubsub.bicep' = {
+  name: '${deployment().name}--pubsubDaprComponent'
+  dependsOn: [
+    containerAppsEnvModule
+    serviceBusModule
+  ]
+  params: {
+    containerAppsEnvName:     containerAppsEnvName
+    serviceBusNamespaceName:  serviceBusNamespaceName
+  }
+}
+
+module redisDaprModule 'modules/dapr-components/dapr-redis-state.bicep' = {
+  name: '${deployment().name}--redisDaprComponent'
+  dependsOn: [
+    containerAppsEnvModule
+    serviceBusModule
+    redisModule
+  ]
+  params: {
+    containerAppsEnvName:     containerAppsEnvName
+    serviceBusNamespaceName:  serviceBusNamespaceName
     redisName:                redisName
+  }
+}
+
+module containerAppsDaprModule 'modules/dapr-components/dapr-storage-binding.bicep' = {
+  name: '${deployment().name}--storageDaprComponent'
+  dependsOn: [
+    containerAppsEnvModule
+    serviceBusModule
+    storageModule
+  ]
+  params: {
+    containerAppsEnvName:     containerAppsEnvName
+    serviceBusNamespaceName:  serviceBusNamespaceName
     storageAccountName:       storageAccountName
   }
 }
