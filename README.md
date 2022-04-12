@@ -44,6 +44,8 @@ To deploy the Reddog services along with the necessary Azure Resources, clone th
 
 > Please note that Container Apps is only available in [a subset of Azure regions](https://azure.microsoft.com/en-ca/global-infrastructure/services/?products=container-apps) during Public Preview. 
 
+> Please note that Container Insights is undergoing a shift in [provider namespace](https://github.com/microsoft/azure-container-apps/issues/109)
+
 
 ```bash
 # *nix only
@@ -57,6 +59,10 @@ az account set --subscription $SUB_ID
 
 # Create resource group
 az group create -n $RG -l $LOCATION
+
+# Add App Container Namespace
+az extension add --name containerapp
+az provider register --namespace Microsoft.App
 
 # Deploy infrastructure and reddog apps
 az deployment group create -n reddog -g $RG -f ./deploy/bicep/main.bicep
