@@ -101,7 +101,6 @@ module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
-    serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
 
