@@ -1,15 +1,15 @@
 param containerAppsEnvName string
 param location string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource virtualCustomers 'Microsoft.Web/containerApps@2021-03-01' = {
+resource virtualCustomers 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'virtual-customers'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {
@@ -20,9 +20,12 @@ resource virtualCustomers 'Microsoft.Web/containerApps@2021-03-01' = {
       scale: {
         minReplicas: 1
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'virtual-customers'
+        appProtocol: 'http'
       }
     }
   }

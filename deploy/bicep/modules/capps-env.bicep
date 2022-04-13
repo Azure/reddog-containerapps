@@ -26,21 +26,17 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   }
 }
 
-resource containerAppsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' = {
+resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
   name: containerAppsEnvName
   location: location
   properties: {
-    type: 'managed'
-    internalLoadBalancerEnabled: false
+    daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
         customerId: logAnalyticsWorkspace.properties.customerId
         sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
       }
-    }
-    containerAppsConfiguration: {
-      daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     }
   }
 }

@@ -1,15 +1,15 @@
 param containerAppsEnvName string
 param location string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource traefik 'Microsoft.Web/containerApps@2021-03-01' = {
+resource traefik 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'reddog'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {
@@ -20,12 +20,13 @@ resource traefik 'Microsoft.Web/containerApps@2021-03-01' = {
       scale: {
         minReplicas: 0
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'traefik'
+        appProtocol: 'http'
       }
-    }
-    configuration: {
       ingress: {
         external: true
         targetPort: 80

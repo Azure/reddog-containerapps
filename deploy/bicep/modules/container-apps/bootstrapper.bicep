@@ -5,15 +5,15 @@ param sqlDatabaseName string
 param sqlAdminLogin string
 param sqlAdminLoginPassword string
 
-resource cappsEnv 'Microsoft.Web/kubeEnvironments@2021-03-01' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource bootstrapper 'Microsoft.Web/containerApps@2021-03-01' = {
+resource bootstrapper 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: 'bootstrapper'
   location: location
   properties: {
-    kubeEnvironmentId: cappsEnv.id
+    managedEnvironmentId: cappsEnv.id
     template: {
       containers: [
         {
@@ -30,12 +30,13 @@ resource bootstrapper 'Microsoft.Web/containerApps@2021-03-01' = {
       scale: {
         minReplicas: 0
       }
+    }
+    configuration: {
       dapr: {
         enabled: true
         appId: 'bootstrapper'
+        appProtocol: 'http'
       }
-    }
-    configuration: {
       secrets: [
         {
           name: 'reddog-sql'

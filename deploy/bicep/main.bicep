@@ -72,16 +72,76 @@ module sqlServerModule 'modules/sqlserver.bicep' = {
   }
 }
 
-module orderServiceModule 'modules/container-apps/order-service.bicep' = {
-  name: '${deployment().name}--order-service'
+module daprBindingReceipt 'modules/dapr-components/binding-receipt.bicep' = {
+  name: '${deployment().name}--dapr-binding-receipt'
+  dependsOn: [
+    containerAppsEnvModule
+    storageModule
+  ]
+  params: {
+    containerAppsEnvName: containerAppsEnvName
+    storageAccountName: storageAccountName
+  }
+}
+
+module daprBindingVirtualWorker 'modules/dapr-components/binding-virtualworker.bicep' = {
+  name: '${deployment().name}--dapr-binding-virtualworker'
+  dependsOn: [
+    containerAppsEnvModule
+  ]
+  params: {
+    containerAppsEnvName: containerAppsEnvName
+  }
+}
+
+module daprPubsub 'modules/dapr-components/pubsub.bicep' = {
+  name: '${deployment().name}--dapr-pubsub'
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
   ]
   params: {
-    location: location
     containerAppsEnvName: containerAppsEnvName
     serviceBusNamespaceName: serviceBusNamespaceName
+  }
+}
+
+module daprStateLoyalty 'modules/dapr-components/state-loyalty.bicep' = {
+  name: '${deployment().name}--dapr-state-loyalty'
+  dependsOn: [
+    containerAppsEnvModule
+    cosmosModule
+  ]
+  params: {
+    containerAppsEnvName: containerAppsEnvName
+    cosmosAccountName: cosmosAccountName
+    cosmosDatabaseName: cosmosDatabaseName
+    cosmosCollectionName: cosmosCollectionName
+  }
+}
+
+module daprStateMakeline 'modules/dapr-components/state-makeline.bicep' = {
+  name: '${deployment().name}--dapr-state-makeline'
+  dependsOn: [
+    containerAppsEnvModule
+    redisModule
+  ]
+  params: {
+    containerAppsEnvName: containerAppsEnvName
+    redisName: redisName
+  }
+}
+
+module orderServiceModule 'modules/container-apps/order-service.bicep' = {
+  name: '${deployment().name}--order-service'
+  dependsOn: [
+    containerAppsEnvModule
+    serviceBusModule
+    daprPubsub
+  ]
+  params: {
+    location: location
+    containerAppsEnvName: containerAppsEnvName
   }
 }
 
@@ -91,12 +151,13 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
     containerAppsEnvModule
     serviceBusModule
     redisModule
+    daprPubsub
+    daprStateMakeline
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
     serviceBusNamespaceName: serviceBusNamespaceName
-    redisName: redisName
   }
 }
 
@@ -105,15 +166,13 @@ module loyaltyServiceModule 'modules/container-apps/loyalty-service.bicep' = {
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
-    cosmosModule
+    daprPubsub
+    daprStateLoyalty
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
     serviceBusNamespaceName: serviceBusNamespaceName
-    cosmosAccountName: cosmosAccountName
-    cosmosDatabaseName: cosmosDatabaseName
-    cosmosCollectionName: cosmosCollectionName
   }
 }
 
@@ -122,13 +181,13 @@ module receiptGenerationServiceModule 'modules/container-apps/receipt-generation
   dependsOn: [
     containerAppsEnvModule
     serviceBusModule
-    storageModule
+    daprBindingReceipt
+    daprPubsub
   ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
     serviceBusNamespaceName: serviceBusNamespaceName
-    storageAccountName: storageAccountName
   }
 }
 
@@ -137,6 +196,7 @@ module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   dependsOn: [
     containerAppsEnvModule
     makeLineServiceModule
+    daprBindingVirtualWorker
   ]
   params: {
     location: location
@@ -168,6 +228,7 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
     serviceBusModule
     sqlServerModule
     bootstrapperModule
+    daprPubsub
   ]
   params: {
     location: location
