@@ -30,6 +30,28 @@ resource accountingService 'Microsoft.App/containerApps@2022-01-01-preview' = {
               secretRef: 'reddog-sql'
             }
           ]
+          probes: [
+            {
+              type: 'readiness'
+              httpGet: {
+                path: '/probes/ready'
+                port: 80
+              }
+              timeoutSeconds: 30
+              successThreshold: 1
+              failureThreshold: 10
+              periodSeconds: 10
+            }
+            {
+              type: 'startup'
+              httpGet: {
+                path: '/probes/healthz'
+                port: 80
+              }
+              failureThreshold: 6
+              periodSeconds: 10
+            }
+          ]
         }
       ]
       scale: {
