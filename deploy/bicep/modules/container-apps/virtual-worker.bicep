@@ -25,6 +25,17 @@ resource virtualWorker 'Microsoft.App/containerApps@2022-01-01-preview' = {
               value: '1'
             }
           ]
+          probes: [
+            {
+              type: 'startup'
+              httpGet: {
+                path: '/probes/healthz'
+                port: 80
+              }
+              failureThreshold: 6
+              periodSeconds: 10
+            }
+          ]
         }
       ]
       scale: {

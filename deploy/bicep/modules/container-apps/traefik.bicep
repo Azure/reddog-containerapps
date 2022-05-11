@@ -15,6 +15,32 @@ resource traefik 'Microsoft.App/containerApps@2022-01-01-preview' = {
         {
           name: 'traefik'
           image: 'ghcr.io/azure/reddog-retail-demo/reddog-traefik:latest'
+          probes: [
+            {
+              type: 'startup'
+              httpGet: {
+                path: '/ping'
+                port: 80
+              }
+              failureThreshold: 3
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 2
+            }
+            {
+              type: 'liveness'
+              httpGet: {
+                path: '/ping'
+                port: 80
+              }
+              failureThreshold: 3
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 2
+            }
+          ]
         }
       ]
       scale: {

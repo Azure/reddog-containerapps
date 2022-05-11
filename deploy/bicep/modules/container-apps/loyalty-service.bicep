@@ -20,6 +20,17 @@ resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
         {
           name: 'loyalty-service'
           image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-loyalty-service:latest'
+          probes: [
+            {
+              type: 'startup'
+              httpGet: {
+                path: ' /probes/healthz'
+                port: 80
+              }
+              failureThreshold: 6
+              periodSeconds: 10
+            }
+          ]
         }
       ]
       scale: {

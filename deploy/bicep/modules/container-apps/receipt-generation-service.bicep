@@ -20,6 +20,17 @@ resource receiptGenerationService 'Microsoft.App/containerApps@2022-01-01-previe
         {
           name: 'receipt-generation-service'
           image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-receipt-generation-service:latest'
+          probes: [
+            {
+              type: 'startup'
+              httpGet: {
+                path: '/probes/healthz'
+                port: 80
+              }
+              failureThreshold: 6
+              periodSeconds: 10
+            }
+          ]
         }
       ]
       scale: {

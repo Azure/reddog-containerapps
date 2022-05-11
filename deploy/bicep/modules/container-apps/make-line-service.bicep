@@ -20,6 +20,17 @@ resource makeLineService 'Microsoft.App/containerApps@2022-01-01-preview' = {
         {
           name: 'make-line-service'
           image: 'ghcr.io/azure/reddog-retail-demo/reddog-retail-make-line-service:latest'
+          probes: [
+            {
+              type: 'startup'
+              httpGet: {
+                path: '/probes/healthz'
+                port: 80
+              }
+              failureThreshold: 6
+              periodSeconds: 10
+            }
+          ]
         }
       ]
       scale: {
