@@ -24,7 +24,7 @@ resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
             {
               type: 'startup'
               httpGet: {
-                path: ' /probes/healthz'
+                path: '/probes/healthz'
                 port: 80
               }
               failureThreshold: 6
