@@ -9,6 +9,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   sku: {
     name: 'Standard_LRS'
   }
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+    publicNetworkAccess: 'Disabled'
+    allowBlobPublicAccess: false
+    supportsHttpsTrafficOnly: true
+  }
 }
 
 resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2021-06-01' = {
