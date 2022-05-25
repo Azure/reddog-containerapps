@@ -2,6 +2,12 @@ param containerAppsEnvName string
 param logAnalyticsWorkspaceName string
 param appInsightsName string
 param location string
+param virtualNetworkName string
+param subnetName string
+
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-08-01' existing = {
+  name: virtualNetworkName
+}
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
   name: logAnalyticsWorkspaceName
@@ -21,7 +27,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: appInsightsName
   location: location
   kind: 'web'
-  properties: { 
+  properties: {
     Application_Type: 'web'
   }
 }
@@ -37,6 +43,10 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview'
         customerId: logAnalyticsWorkspace.properties.customerId
         sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
       }
+    }
+    vnetConfiguration: {
+      infrastructureSubnetId: '${virtualNetwork.id}/subnets/${subnetName}'
+      internal: false
     }
   }
 }

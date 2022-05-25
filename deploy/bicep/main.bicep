@@ -15,14 +15,30 @@ param sqlServerName string = 'sql-${uniqueSuffix}'
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
 param sqlAdminLoginPassword string = take(newGuid(), 16)
+param virtualNetworkName string = 'containerapps-${uniqueString(uniqueSeed)}'
+param subnetName string = 'containerapps-${uniqueString(uniqueSeed)}'
+
+module vnetModule 'modules/vnet.bicep' = {
+  name: '${deployment().name}--containerAppsVnet'
+  params: {
+    location: location
+    virtualNetworkName: virtualNetworkName
+    subnetName: subnetName
+  }
+}
 
 module containerAppsEnvModule 'modules/capps-env.bicep' = {
   name: '${deployment().name}--containerAppsEnv'
+  dependsOn: [
+    vnetModule
+  ]
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
     appInsightsName: appInsightsName
+    virtualNetworkName: virtualNetworkName
+    subnetName: subnetName
   }
 }
 
@@ -54,10 +70,15 @@ module cosmosModule 'modules/cosmos.bicep' = {
 
 module storageModule 'modules/storage.bicep' = {
   name: '${deployment().name}--storage'
+  dependsOn: [
+    vnetModule
+  ]
   params: {
     storageAccountName: storageAccountName
     blobContainerName: blobContainerName
     location: location
+    virtualNetworkName: virtualNetworkName
+    subnetName: subnetName
   }
 }
 
