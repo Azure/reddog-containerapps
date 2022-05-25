@@ -25,33 +25,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
       defaultAction: 'Deny'
       ipRules: []
       resourceAccessRules: []
-      virtualNetworkRules: []
-    }
-  }
-}
-
-resource storagePrivateEndpointBlob 'Microsoft.Network/privateEndpoints@2020-06-01' = {
-  name: 'test'
-  location: location
-  properties: {
-    privateLinkServiceConnections: [
-      {
-        name: 'test'
-        properties: {
-          groupIds: [
-            'blob'
-          ]
-          privateLinkServiceId: storageAccount.id
-          privateLinkServiceConnectionState: {
-            status: 'Approved'
-            description: 'Auto-Approved'
-            actionsRequired: 'None'
-          }
+      virtualNetworkRules: [
+        {
+          action: 'Allow'
+          id: '${virtualNetwork.id}/subnets/${subnetName}'
         }
-      }
-    ]
-    subnet: {
-      id: '${virtualNetwork.id}/subnets/${subnetName}'
+      ]
     }
   }
 }

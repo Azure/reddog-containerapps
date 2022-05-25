@@ -16,6 +16,11 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-08-01' = {
         name: subnetName
         properties: {
           addressPrefix: '10.0.0.0/23'
+          serviceEndpoints: [
+             {
+                service: 'Microsoft.Storage'
+             }
+          ]
         }
       }
     ]
