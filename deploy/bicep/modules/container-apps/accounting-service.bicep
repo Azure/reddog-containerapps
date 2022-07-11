@@ -14,7 +14,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existin
   name: serviceBusNamespaceName
 }
 
-resource accountingService 'Microsoft.App/containerApps@2022-01-01-preview' = {
+resource accountingService 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'accounting-service'
   location: location
   properties: {

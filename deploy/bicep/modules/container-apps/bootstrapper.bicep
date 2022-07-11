@@ -9,7 +9,7 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existin
   name: containerAppsEnvName
 }
 
-resource bootstrapper 'Microsoft.App/containerApps@2022-01-01-preview' = {
+resource bootstrapper 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'bootstrapper'
   location: location
   properties: {
