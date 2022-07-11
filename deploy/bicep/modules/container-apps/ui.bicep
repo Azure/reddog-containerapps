@@ -5,7 +5,7 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existin
   name: containerAppsEnvName
 }
 
-resource ui 'Microsoft.App/containerApps@2022-01-01-preview' = {
+resource ui 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'ui'
   location: location
   properties: {

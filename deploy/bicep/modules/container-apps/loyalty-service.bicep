@@ -10,7 +10,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existin
   name: serviceBusNamespaceName
 }
 
-resource loyaltyService 'Microsoft.App/containerApps@2022-01-01-preview' = {
+resource loyaltyService 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'loyalty-service'
   location: location
   properties: {

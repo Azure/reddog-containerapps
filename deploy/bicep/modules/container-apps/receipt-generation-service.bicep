@@ -10,7 +10,7 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existin
   name: serviceBusNamespaceName
 }
 
-resource receiptGenerationService 'Microsoft.App/containerApps@2022-01-01-preview' = {
+resource receiptGenerationService 'Microsoft.App/containerApps@2022-03-01' = {
   name: 'receipt-generation-service'
   location: location
   properties: {
