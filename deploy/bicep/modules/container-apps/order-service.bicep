@@ -1,11 +1,11 @@
 param containerAppsEnvName string
 param location string
 
-resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource orderService 'Microsoft.App/containerApps@2022-03-01' = {
+resource orderService 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: 'order-service'
   location: location
   properties: {

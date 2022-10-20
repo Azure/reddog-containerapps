@@ -3,13 +3,15 @@ param location string
 param sqlServerName string
 param sqlDatabaseName string
 param sqlAdminLogin string
+
+@secure()
 param sqlAdminLoginPassword string
 
-resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource bootstrapper 'Microsoft.App/containerApps@2022-03-01' = {
+resource bootstrapper 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: 'bootstrapper'
   location: location
   properties: {

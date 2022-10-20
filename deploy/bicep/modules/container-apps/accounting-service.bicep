@@ -4,6 +4,8 @@ param serviceBusNamespaceName string
 param sqlServerName string
 param sqlDatabaseName string
 param sqlAdminLogin string
+
+@secure()
 param sqlAdminLoginPassword string
 
 resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
@@ -12,6 +14,11 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existin
 
 resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
   name: serviceBusNamespaceName
+}
+
+resource serviceBusAuthRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2022-01-01-preview' existing = {
+  name: 'RootManageSharedAccessKey'
+  parent: serviceBus
 }
 
 resource accountingService 'Microsoft.App/containerApps@2022-03-01' = {
@@ -99,7 +106,7 @@ resource accountingService 'Microsoft.App/containerApps@2022-03-01' = {
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
+          value: serviceBusAuthRules.listKeys().primaryConnectionString
         }
         {
           name: 'reddog-sql'
