@@ -3,15 +3,15 @@ param cosmosAccountName string
 param cosmosDatabaseName string
 param cosmosCollectionName string
 
-resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2021-06-15' existing = {
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2022-08-15' existing = {
   name: cosmosAccountName
 }
 
-resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource daprComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-01-01-preview' = {
+resource daprComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-06-01-preview' = {
   name: 'reddog.state.loyalty'
   parent: cappsEnv
   properties: {
@@ -20,7 +20,7 @@ resource daprComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-01
     metadata: [
       {
         name: 'url'
-        value: 'https://${cosmosAccountName}.documents.azure.com:443/'
+        value: cosmosAccount.properties.documentEndpoint
       }
       {
         name: 'database'
@@ -38,7 +38,7 @@ resource daprComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-01
     secrets: [
       {
         name: 'cosmos-primary-rw-key'
-        value: listkeys(cosmosAccount.id, cosmosAccount.apiVersion).primaryMasterKey
+        value: cosmosAccount.listKeys().primaryMasterKey
       }
     ]
     scopes: [

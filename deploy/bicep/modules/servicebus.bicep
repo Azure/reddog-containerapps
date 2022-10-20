@@ -1,7 +1,7 @@
 param serviceBusNamespaceName string
 param location string
 
-resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -10,3 +10,5 @@ resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' = {
     capacity: 1
   }
 }
+
+output namespaceName string = serviceBus.name

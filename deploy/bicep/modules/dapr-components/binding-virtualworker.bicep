@@ -1,10 +1,10 @@
 param containerAppsEnvName string
 
-resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource daprComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-01-01-preview' = {
+resource daprComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-06-01-preview' = {
   name: 'orders'
   parent: cappsEnv
   properties: {

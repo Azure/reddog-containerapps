@@ -2,15 +2,20 @@ param containerAppsEnvName string
 param location string
 param serviceBusNamespaceName string
 
-resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
+resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource serviceBus 'Microsoft.ServiceBus/namespaces@2021-06-01-preview' existing = {
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2022-01-01-preview' existing = {
   name: serviceBusNamespaceName
 }
 
-resource loyaltyService 'Microsoft.App/containerApps@2022-03-01' = {
+resource serviceBusAuthRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2022-01-01-preview' existing = {
+  name: 'RootManageSharedAccessKey'
+  parent: serviceBus
+}
+
+resource loyaltyService 'Microsoft.App/containerApps@2022-06-01-preview' = {
   name: 'loyalty-service'
   location: location
   properties: {
@@ -70,7 +75,7 @@ resource loyaltyService 'Microsoft.App/containerApps@2022-03-01' = {
       secrets: [
         {
           name: 'sb-root-connectionstring'
-          value: listKeys('${serviceBus.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBus.apiVersion).primaryConnectionString
+          value: serviceBusAuthRules.listKeys().primaryConnectionString
         }
       ]
     }

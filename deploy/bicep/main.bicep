@@ -14,6 +14,8 @@ param blobContainerName string = 'receipts'
 param sqlServerName string = 'sql-${uniqueSuffix}'
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
+
+@secure()
 param sqlAdminLoginPassword string = take(newGuid(), 16)
 
 module containerAppsEnvModule 'modules/capps-env.bicep' = {
@@ -74,47 +76,32 @@ module sqlServerModule 'modules/sqlserver.bicep' = {
 
 module daprBindingReceipt 'modules/dapr-components/binding-receipt.bicep' = {
   name: '${deployment().name}--dapr-binding-receipt'
-  dependsOn: [
-    containerAppsEnvModule
-    storageModule
-  ]
   params: {
-    containerAppsEnvName: containerAppsEnvName
-    storageAccountName: storageAccountName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
+    storageAccountName: storageModule.outputs.name
   }
 }
 
 module daprBindingVirtualWorker 'modules/dapr-components/binding-virtualworker.bicep' = {
   name: '${deployment().name}--dapr-binding-virtualworker'
-  dependsOn: [
-    containerAppsEnvModule
-  ]
   params: {
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
   }
 }
 
 module daprPubsub 'modules/dapr-components/pubsub.bicep' = {
   name: '${deployment().name}--dapr-pubsub'
-  dependsOn: [
-    containerAppsEnvModule
-    serviceBusModule
-  ]
   params: {
-    containerAppsEnvName: containerAppsEnvName
-    serviceBusNamespaceName: serviceBusNamespaceName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
+    serviceBusNamespaceName: serviceBusModule.outputs.namespaceName
   }
 }
 
 module daprStateLoyalty 'modules/dapr-components/state-loyalty.bicep' = {
   name: '${deployment().name}--dapr-state-loyalty'
-  dependsOn: [
-    containerAppsEnvModule
-    cosmosModule
-  ]
   params: {
-    containerAppsEnvName: containerAppsEnvName
-    cosmosAccountName: cosmosAccountName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
+    cosmosAccountName: cosmosModule.outputs.accountName
     cosmosDatabaseName: cosmosDatabaseName
     cosmosCollectionName: cosmosCollectionName
   }
@@ -122,26 +109,21 @@ module daprStateLoyalty 'modules/dapr-components/state-loyalty.bicep' = {
 
 module daprStateMakeline 'modules/dapr-components/state-makeline.bicep' = {
   name: '${deployment().name}--dapr-state-makeline'
-  dependsOn: [
-    containerAppsEnvModule
-    redisModule
-  ]
   params: {
-    containerAppsEnvName: containerAppsEnvName
-    redisName: redisName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
+    redisName: redisModule.outputs.name
   }
 }
 
 module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   name: '${deployment().name}--order-service'
   dependsOn: [
-    containerAppsEnvModule
     serviceBusModule
     daprPubsub
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
   }
 }
 
@@ -156,7 +138,7 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
     serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
@@ -179,14 +161,13 @@ module loyaltyServiceModule 'modules/container-apps/loyalty-service.bicep' = {
 module receiptGenerationServiceModule 'modules/container-apps/receipt-generation-service.bicep' = {
   name: '${deployment().name}--receipt-generation-service'
   dependsOn: [
-    containerAppsEnvModule
     serviceBusModule
     daprBindingReceipt
     daprPubsub
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
     serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
@@ -194,28 +175,26 @@ module receiptGenerationServiceModule 'modules/container-apps/receipt-generation
 module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   name: '${deployment().name}--virtual-worker'
   dependsOn: [
-    containerAppsEnvModule
     makeLineServiceModule
     daprBindingVirtualWorker
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
   }
 }
 
 module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   name: '${deployment().name}--bootstrapper'
   dependsOn: [
-    containerAppsEnvModule
     sqlServerModule
     orderServiceModule
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
     sqlDatabaseName: sqlDatabaseName
-    sqlServerName: sqlServerName
+    sqlServerName: sqlServerModule.outputs.serverName
     sqlAdminLogin: sqlAdminLogin
     sqlAdminLoginPassword: sqlAdminLoginPassword
   }
@@ -224,7 +203,6 @@ module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
 module accountingServiceModule 'modules/container-apps/accounting-service.bicep' = {
   name: '${deployment().name}--accounting-service'
   dependsOn: [
-    containerAppsEnvModule
     serviceBusModule
     sqlServerModule
     bootstrapperModule
@@ -232,7 +210,7 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
     serviceBusNamespaceName: serviceBusNamespaceName
     sqlServerName: sqlServerName
     sqlDatabaseName: sqlDatabaseName
@@ -244,7 +222,6 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
 module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
   name: '${deployment().name}--virtual-customer'
   dependsOn: [
-    containerAppsEnvModule
     orderServiceModule
     makeLineServiceModule
     receiptGenerationServiceModule
@@ -253,31 +230,27 @@ module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
   }
 }
 
 module traefikModule 'modules/container-apps/traefik.bicep' = {
   name: '${deployment().name}--traefik'
-  dependsOn: [
-    containerAppsEnvModule
-  ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
   }
 }
 
 module uiModule 'modules/container-apps/ui.bicep' = {
   name: '${deployment().name}--ui'
   dependsOn: [
-    containerAppsEnvModule
     makeLineServiceModule
     accountingServiceModule
   ]
   params: {
     location: location
-    containerAppsEnvName: containerAppsEnvName
+    containerAppsEnvName: containerAppsEnvModule.outputs.name
   }
 }
 
