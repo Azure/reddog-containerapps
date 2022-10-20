@@ -18,6 +18,9 @@ param sqlAdminLogin string = 'reddog'
 @secure()
 param sqlAdminLoginPassword string = take(newGuid(), 16)
 
+@description('By default all apps scale down to 0. This setting ensures a minimum instance count of 1 for UI and Traefik.')
+param keepUiAppUp bool = true
+
 module containerAppsEnvModule 'modules/capps-env.bicep' = {
   name: '${deployment().name}--containerAppsEnv'
   params: {
@@ -239,6 +242,7 @@ module traefikModule 'modules/container-apps/traefik.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    minReplicas: keepUiAppUp ? 1 : 0
   }
 }
 
@@ -251,6 +255,7 @@ module uiModule 'modules/container-apps/ui.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    minReplicas: keepUiAppUp ? 1 : 0
   }
 }
 

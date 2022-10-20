@@ -1,6 +1,8 @@
 param containerAppsEnvName string
 param location string
 
+param minReplicas int = 0
+
 resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
@@ -44,7 +46,7 @@ resource ui 'Microsoft.App/containerApps@2022-06-01-preview' = {
         }
       ]
       scale: {
-        minReplicas: 0
+        minReplicas: minReplicas
       }
     }
     configuration: {
