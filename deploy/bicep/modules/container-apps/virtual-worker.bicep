@@ -1,15 +1,17 @@
 param containerAppsEnvName string
 param location string
+param workloadProfileName string
 
 resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
 }
 
-resource virtualWorker 'Microsoft.App/containerApps@2022-06-01-preview' = {
+resource virtualWorker 'Microsoft.App/containerApps@2022-11-01-preview' = {
   name: 'virtual-worker'
   location: location
   properties: {
     managedEnvironmentId: cappsEnv.id
+    workloadProfileName: workloadProfileName
     template: {
       containers: [
         {

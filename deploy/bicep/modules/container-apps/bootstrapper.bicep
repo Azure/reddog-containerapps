@@ -3,6 +3,7 @@ param location string
 param sqlServerName string
 param sqlDatabaseName string
 param sqlAdminLogin string
+param workloadProfileName string
 
 @secure()
 param sqlAdminLoginPassword string
@@ -11,11 +12,12 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existin
   name: containerAppsEnvName
 }
 
-resource bootstrapper 'Microsoft.App/containerApps@2022-06-01-preview' = {
+resource bootstrapper 'Microsoft.App/containerApps@2022-11-01-preview' = {
   name: 'bootstrapper'
   location: location
   properties: {
     managedEnvironmentId: cappsEnv.id
+    workloadProfileName: workloadProfileName
     template: {
       containers: [
         {

@@ -1,6 +1,7 @@
 param containerAppsEnvName string
 param location string
 param serviceBusNamespaceName string
+param workloadProfileName string
 
 resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: containerAppsEnvName
@@ -15,11 +16,12 @@ resource serviceBusAuthRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules
   parent: serviceBus
 }
 
-resource makeLineService 'Microsoft.App/containerApps@2022-03-01' = {
+resource makeLineService 'Microsoft.App/containerApps@2022-11-01-preview' = {
   name: 'make-line-service'
   location: location
   properties: {
     managedEnvironmentId: cappsEnv.id
+    workloadProfileName: workloadProfileName
     template: {
       containers: [
         {
