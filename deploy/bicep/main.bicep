@@ -14,7 +14,7 @@ param blobContainerName string = 'receipts'
 param sqlServerName string = 'sql-${uniqueSuffix}'
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
-param vnetSubnetId string
+param vnetSubnetId string = ''
 param workloadProfileName string = 'egresslockdown'
 param workloadProfileType string = 'D4'
 

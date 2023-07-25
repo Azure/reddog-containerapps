@@ -38,7 +38,7 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-11-01-preview'
 
   properties: {
     vnetConfiguration: {
-      infrastructureSubnetId: vnetSubnetId
+      infrastructureSubnetId: ((!empty(vnetSubnetId)) ? vnetSubnetId : null)
       internal: true
     }
     workloadProfiles: [
