@@ -129,6 +129,7 @@ module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   dependsOn: [
     serviceBusModule
     daprPubsub
+    cosmosModule
   ]
   params: {
     location: location
@@ -145,6 +146,7 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
     redisModule
     daprPubsub
     daprStateMakeline
+    cosmosModule
   ]
   params: {
     location: location
@@ -281,3 +283,6 @@ output urls array = [
   'Makeline Orders (Redmond): https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/makeline/orders/Redmond'
   'Accounting Order Metrics (Redmond): https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/accounting/OrderMetrics?StoreId=Redmond'
 ]
+
+output capsenvname string = containerAppsEnvModule.outputs.name
+output capsenvfqdn string = containerAppsEnvModule.outputs.defaultDomain

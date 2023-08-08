@@ -81,7 +81,8 @@ TARGET_FQDNS=('mcr.microsoft.com' \
 'marketplace.azurecr.io' \
 'marketplaceeush.cdn.azcr.io' \
 'ghcr.io' \
-'pkg-containers.githubusercontent.com')
+'pkg-containers.githubusercontent.com' \
+'*.servicebus.windows.net')
 
 # Create the application rule for ACA Container Registry Access
 az network firewall application-rule create \
@@ -103,7 +104,7 @@ az network firewall network-rule create \
 --protocols 'TCP' \
 --source-addresses '*' \
 --destination-addresses  "ServiceBus" \
---destination-ports 5671 \
+--destination-ports 5671 443 \
 --action allow --priority 400
 
 az network firewall network-rule create \
@@ -124,7 +125,7 @@ az network firewall network-rule create \
 --protocols 'TCP' \
 --source-addresses '*' \
 --destination-addresses  "AzureCosmosDB" \
---destination-ports 443
+--destination-ports 443 6380
 
 az network firewall network-rule create \
 -g $RG \
@@ -186,20 +187,26 @@ az network vnet subnet update \
 ## Deploy the Environment and Apps
 
 ```bash
-az deployment group create -n reddog -g $RG -f ./deploy/bicep/main.bicep --parameters vnetSubnetId=$PRIV_ACA_ENV_SUBNET_ID
+ACARG=RedDogACAEgressLockdown-App
+LOC=eastus
 
-az deployment group show -n reddog -g $RG -o json --query properties.outputs.urls.value
+# Create the App Resource Group
+az group create -n $ACARG -l $LOC
+
+az deployment group create -n reddog -g $ACARG -f ./deploy/bicep/main.bicep --parameters vnetSubnetId=$PRIV_ACA_ENV_SUBNET_ID
+
+az deployment group show -n reddog -g $ACARG -o json --query properties.outputs.urls.value
 ```
 
 ## Create the private zone
 
 ```bash
-# TODO: Parameterize the env name
 # Get the App FQDN
-ENVIRONMENT_DEFAULT_DOMAIN=$(az containerapp env show --name cae-reddog-rcr4hoxcosure --resource-group ${RG} --query properties.defaultDomain --out tsv)
+APP_ENV=$(az deployment group show -n reddog -g $ACARG -o tsv --query properties.outputs.capsenvname.value)
+ENVIRONMENT_DEFAULT_DOMAIN=$(az deployment group show -n reddog -g $ACARG -o tsv --query properties.outputs.capsenvfqdn.value)
 
 # Get the App Private IP
-ENVIRONMENT_STATIC_IP=$(az containerapp env show --name cae-reddog-rcr4hoxcosure --resource-group ${RG} --query properties.staticIp --out tsv)
+ENVIRONMENT_STATIC_IP=$(az containerapp env show --name $APP_ENV --resource-group ${ACARG} --query properties.staticIp --out tsv)
 
 # Create the Private Zone
 az network private-dns zone create \
