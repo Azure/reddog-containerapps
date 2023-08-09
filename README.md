@@ -38,7 +38,11 @@ Traefik is a leading reverse proxy and load balancer that integrates with your e
 
 >A tenth service, Bootstrapper is also executed in a Container App. This service is run once to perform the database creation and is subsequently scaled to 0 after creating the necessary objects in Azure SQL Database.
 
-## Deployment
+## Egress Lockdown Deployment
+
+If you wish to deploy reddog on ACA in a Vnet configured to restrict egress traffic, you can jump to the [Egress Lockdown](./EGRESS-LOCKDOWN.md) guide. This document will walk you through setting up a secured Vnet, or reusing your own, and deploying the application to that secured infrastructure.
+
+## Standard Deployment
 
 To deploy the Reddog services along with the necessary Azure Resources, clone this repo and run the following [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) commands. You will need an Azure subscription where you have permission to create a Resource Group (eg. Contributor). Alternatively you may execute the [deploy.sh](./deploy.sh) script.
 

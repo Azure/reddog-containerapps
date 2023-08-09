@@ -4,7 +4,7 @@
 
 This doc walks through a sample configuration of a locked down network infrastructure. It will create the Virtual Network, Subnets, Firewall and Route Table to force egress traffic out through the firewall. It also provides the minimum firewall rules needed by Azure Container Apps and the Red Dog application.
 
-> **Note:** If you already have a virutal network configured for egress control through your enterprise egress firewall, you can skip to the rules section and share those with your network admin to setup access before deploying the application.
+> **Note:** If you already have a virutal network configured for egress control through your enterprise egress firewall, you can skip to the rules section and share those with your network admin to setup access before deploying the application. Once the rules are applied, you can skip ahead to the [Deploy the Environment and Apps](#deploy-the-environment-and-apps) section.
 
 ## Prepare the Vnet
 
