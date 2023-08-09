@@ -32,14 +32,11 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-11-01-preview' = {
   name: containerAppsEnvName
   location: location
-  // sku: {
-  //   name: 'Consumption'
-  // }
-
+  
   properties: {
     vnetConfiguration: {
       infrastructureSubnetId: ((!empty(vnetSubnetId)) ? vnetSubnetId : null)
-      internal: true
+      internal: ((!empty(vnetSubnetId)) ? true : false)
     }
     workloadProfiles: [
       {
