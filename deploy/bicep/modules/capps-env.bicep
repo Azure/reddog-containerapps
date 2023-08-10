@@ -3,6 +3,7 @@ param logAnalyticsWorkspaceName string
 param appInsightsName string
 param location string
 param vnetSubnetId string
+param vnetInternal bool
 param workloadProfileName string
 param workloadProfileType string
 
@@ -32,20 +33,21 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2022-11-01-preview' = {
   name: containerAppsEnvName
   location: location
-  
+
   properties: {
     vnetConfiguration: {
       infrastructureSubnetId: ((!empty(vnetSubnetId)) ? vnetSubnetId : null)
-      internal: ((!empty(vnetSubnetId)) ? true : false)
+      internal: vnetInternal
     }
-    workloadProfiles: [
+    workloadProfiles: ((empty(vnetSubnetId)) ? null : [
       {
         minimumCount: 1
         maximumCount: 10
         name: workloadProfileName
         workloadProfileType: workloadProfileType
       }
-    ]
+    ])
+    
     daprAIInstrumentationKey: appInsights.properties.InstrumentationKey
     appLogsConfiguration: {
       destination: 'log-analytics'

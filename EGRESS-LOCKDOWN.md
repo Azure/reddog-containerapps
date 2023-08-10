@@ -186,6 +186,8 @@ az network vnet subnet update \
 
 ## Deploy the Environment and Apps
 
+To take advantage of the UDR, we'll deploy the app with a Vnet/Subnet resource ID, Internal Networking enabled and a workload profile configuration. 
+
 ```bash
 ACARG=RedDogACAEgressLockdown-App
 LOC=eastus
@@ -193,7 +195,13 @@ LOC=eastus
 # Create the App Resource Group
 az group create -n $ACARG -l $LOC
 
-az deployment group create -n reddog -g $ACARG -f ./deploy/bicep/main.bicep --parameters vnetSubnetId=$PRIV_ACA_ENV_SUBNET_ID
+az deployment group create -n reddog -g $ACARG -f ./deploy/bicep/main.bicep \
+--parameters \
+vnetSubnetId=$PRIV_ACA_ENV_SUBNET_ID \
+vnetInternal=true \
+workloadProfileName=reddog \
+workloadProfileType=D4 
+
 
 az deployment group show -n reddog -g $ACARG -o json --query properties.outputs.urls.value
 ```
@@ -228,3 +236,7 @@ az network private-dns record-set a add-record \
 --zone-name $ENVIRONMENT_DEFAULT_DOMAIN
 
 ```
+
+## Accessing the Application
+
+To access the reddog UI at the URL you got from the deployment output, you'll need to create a jump server in the vnet that you can use. You can either enable 'Bastion' on the Vnet and then create a VM with no public IP, or you can create a separate subnet that doesnt have the route table attached, and create a VM in that subnet with a public IP you can use to access the network. 

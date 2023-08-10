@@ -15,8 +15,9 @@ param sqlServerName string = 'sql-${uniqueSuffix}'
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
 param vnetSubnetId string = ''
-param workloadProfileName string = 'egresslockdown'
-param workloadProfileType string = 'D4'
+param workloadProfileName string = ''
+param workloadProfileType string = ''
+param vnetInternal bool = false
 
 @secure()
 param sqlAdminLoginPassword string = take(newGuid(), 16)
@@ -29,6 +30,7 @@ module containerAppsEnvModule 'modules/capps-env.bicep' = {
   params: {
     location: location
     vnetSubnetId: vnetSubnetId
+    vnetInternal: vnetInternal
     workloadProfileName: workloadProfileName
     workloadProfileType: workloadProfileType
     containerAppsEnvName: containerAppsEnvName
@@ -129,7 +131,6 @@ module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   dependsOn: [
     serviceBusModule
     daprPubsub
-    cosmosModule
   ]
   params: {
     location: location
@@ -146,7 +147,6 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
     redisModule
     daprPubsub
     daprStateMakeline
-    cosmosModule
   ]
   params: {
     location: location
