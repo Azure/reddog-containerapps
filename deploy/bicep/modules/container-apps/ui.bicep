@@ -1,5 +1,6 @@
 param containerAppsEnvName string
 param location string
+param workloadProfileName string
 
 param minReplicas int = 0
 
@@ -7,11 +8,12 @@ resource cappsEnv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existin
   name: containerAppsEnvName
 }
 
-resource ui 'Microsoft.App/containerApps@2022-06-01-preview' = {
+resource ui 'Microsoft.App/containerApps@2022-11-01-preview' = {
   name: 'ui'
   location: location
   properties: {
     managedEnvironmentId: cappsEnv.id
+    workloadProfileName: workloadProfileName
     template: {
       containers: [
         {

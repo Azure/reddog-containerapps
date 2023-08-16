@@ -14,6 +14,10 @@ param blobContainerName string = 'receipts'
 param sqlServerName string = 'sql-${uniqueSuffix}'
 param sqlDatabaseName string = 'reddog'
 param sqlAdminLogin string = 'reddog'
+param vnetSubnetId string = ''
+param workloadProfileName string = ''
+param workloadProfileType string = ''
+param vnetInternal bool = false
 
 @secure()
 param sqlAdminLoginPassword string = take(newGuid(), 16)
@@ -25,6 +29,10 @@ module containerAppsEnvModule 'modules/capps-env.bicep' = {
   name: '${deployment().name}--containerAppsEnv'
   params: {
     location: location
+    vnetSubnetId: vnetSubnetId
+    vnetInternal: vnetInternal
+    workloadProfileName: workloadProfileName
+    workloadProfileType: workloadProfileType
     containerAppsEnvName: containerAppsEnvName
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
     appInsightsName: appInsightsName
@@ -127,6 +135,7 @@ module orderServiceModule 'modules/container-apps/order-service.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
   }
 }
 
@@ -142,6 +151,7 @@ module makeLineServiceModule 'modules/container-apps/make-line-service.bicep' = 
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
     serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
@@ -157,6 +167,7 @@ module loyaltyServiceModule 'modules/container-apps/loyalty-service.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvName
+    workloadProfileName: workloadProfileName
     serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
@@ -171,6 +182,7 @@ module receiptGenerationServiceModule 'modules/container-apps/receipt-generation
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
     serviceBusNamespaceName: serviceBusNamespaceName
   }
 }
@@ -184,6 +196,7 @@ module virtualWorkerModule 'modules/container-apps/virtual-worker.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
   }
 }
 
@@ -196,6 +209,7 @@ module bootstrapperModule 'modules/container-apps/bootstrapper.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
     sqlDatabaseName: sqlDatabaseName
     sqlServerName: sqlServerModule.outputs.serverName
     sqlAdminLogin: sqlAdminLogin
@@ -214,6 +228,7 @@ module accountingServiceModule 'modules/container-apps/accounting-service.bicep'
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
     serviceBusNamespaceName: serviceBusNamespaceName
     sqlServerName: sqlServerName
     sqlDatabaseName: sqlDatabaseName
@@ -234,6 +249,7 @@ module virtualCustomerModule 'modules/container-apps/virtual-customer.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
   }
 }
 
@@ -242,6 +258,7 @@ module traefikModule 'modules/container-apps/traefik.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
     minReplicas: keepUiAppUp ? 1 : 0
   }
 }
@@ -255,6 +272,7 @@ module uiModule 'modules/container-apps/ui.bicep' = {
   params: {
     location: location
     containerAppsEnvName: containerAppsEnvModule.outputs.name
+    workloadProfileName: workloadProfileName
     minReplicas: keepUiAppUp ? 1 : 0
   }
 }
@@ -265,3 +283,6 @@ output urls array = [
   'Makeline Orders (Redmond): https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/makeline/orders/Redmond'
   'Accounting Order Metrics (Redmond): https://reddog.${containerAppsEnvModule.outputs.defaultDomain}/accounting/OrderMetrics?StoreId=Redmond'
 ]
+
+output capsenvname string = containerAppsEnvModule.outputs.name
+output capsenvfqdn string = containerAppsEnvModule.outputs.defaultDomain

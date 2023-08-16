@@ -4,6 +4,7 @@ param serviceBusNamespaceName string
 param sqlServerName string
 param sqlDatabaseName string
 param sqlAdminLogin string
+param workloadProfileName string
 
 @secure()
 param sqlAdminLoginPassword string
@@ -21,11 +22,12 @@ resource serviceBusAuthRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules
   parent: serviceBus
 }
 
-resource accountingService 'Microsoft.App/containerApps@2022-03-01' = {
+resource accountingService 'Microsoft.App/containerApps@2022-11-01-preview' = {
   name: 'accounting-service'
   location: location
   properties: {
     managedEnvironmentId: cappsEnv.id
+    workloadProfileName: workloadProfileName
     template: {
       containers: [
         {
