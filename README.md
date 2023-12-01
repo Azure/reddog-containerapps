@@ -119,31 +119,20 @@ We will now use the portal to take a look at how we can implement blue/green dep
     
 <img width="1200" alt="create container app" src="https://github.com/pjlewisuk/reddog-containerapps/assets/48108258/427ffb14-eb47-4a45-9c89-cc2fde4c8ab3">
 
-3. Lets give the environment a new name and then se
-lect workload profiles as the environment type and enable zone redundancy. Next click on workload profiles and review the consumption profile. There is no next button on the portal here so dont press create yet, navigate through the options using the menus at the top.
+3. Lets give the environment a new name and then select workload profiles as the environment type and enable zone redundancy. Next click on workload profiles and review the consumption profile. There is no next button on the portal here so dont press create yet, navigate through the options using the menus at the top.
 
 <img width="1169" alt="Create container apps env" src="https://github.com/pjlewisuk/reddog-containerapps/assets/48108258/474631a0-e040-4b44-849e-99a7bb392e0b">
 
-  Review the available profiles & pick a new profile to add to your environment. When   creating the profile set an autoscale min of 3 and a max of 5. 
-
-  This is because we are going   to use a small subnet and the ACA-E will fail to create if the maximum scale for a profile surpases the IP addresses available in the subnet. 
+Review the available profiles & pick a new profile to add to your environment. When   creating the profile set an autoscale min of 3 and a max of 5. This is because we are going   to use a small subnet and the ACA-E will fail to create if the maximum scale for a profile surpases the IP addresses available in the subnet. 
   
-  Next review the monitoring options. We can leave this at default for the moment. 
+Next review the monitoring options. We can leave this at default for the moment. 
 
-  Finally let's deploy this environment in our own VNET by creatig a new VNET and SUBNET.
-  As we know from earlier this is required for high availability. When creating a VNET in the portal we are not able to change the IP range. Let's then create a new /27 subnet. 
-  
-  This is the smallest subnet we can use for a container apps environment. 
-  We can then select an external virtual IP to allow for public connections to our container apps (when we specify it).
+Finally let's deploy this environment in our own VNET by creatig a new VNET and SUBNET. As we know from earlier this is required for high availability. When creating a VNET in the portal we are not able to change the IP range. Let's then create a new /27 subnet. This is the smallest subnet we can use for a container apps environment. We can then select an external virtual IP to allow for public connections to our container apps (when we specify it).
   
   <img width="1199" alt="acae-subnet" src="https://github.com/pjlewisuk/reddog-containerapps/assets/48108258/7461a52b-70e9-4c02-8d37-3e78c5b66388">
 
 
-4. Once the environment is created we can then press next and begin to configure our container apps container. We are going to use a public docker hub image "scubakiz/servicedemo:1.0" for this demo. We can leave the other feilds here as is. See the screenshot for the config if you are unsure.
-
-   Select the new workload profile you created when deploying the container. You are able to set the containers resource limits as you would in a dockerfile through the portal here.
-
-  Finally we will add a single enviroment variable called "IMAGE_COLOR" with a value of "green".
+4. Once the environment is created we can then press next and begin to configure our container apps container. We are going to use a public docker hub image "scubakiz/servicedemo:1.0" for this demo. We can leave the other feilds here as is. See the screenshot for the config if you are unsure. Select the new workload profile you created when deploying the container. You are able to set the containers resource limits as you would in a dockerfile through the portal here. Finally we will add a single enviroment variable called "IMAGE_COLOR" with a value of "green".
 
 <img width="835" alt="configure container app container" src="https://github.com/pjlewisuk/reddog-containerapps/assets/48108258/5dc03991-f378-49ac-a5bf-c9b3d5afa2ad">
 
@@ -156,11 +145,11 @@ lect workload profiles as the environment type and enable zone redundancy. Next 
 7. Once your container app is created click through and check the app is running as expected by clicking the app URL in the overview.
 
 8. Once we have validated the app is running its time to create another version and do some blue green testing. First we need to change the revision mode. We can do this by clicking revision mode in the revisions blade.
-9. 
+   
 <img width="938" alt="single-to-multi-revisions" src="https://github.com/pjlewisuk/reddog-containerapps/assets/48108258/447c6a4a-4790-4920-b0c7-a77ca77805d3">
 
 
-10. Next we need to click "Create new revision". Once here we can see our existing contianer images in our container app. Select the existing image we are using. We can then click the image and make a change. In this case we are going to change the environment variable we added. Change the value from green to blue and save the new revision. You will see the new revision being deployed in the revisions portal.
+9. Next we need to click "Create new revision". Once here we can see our existing contianer images in our container app. Select the existing image we are using. We can then click the image and make a change. In this case we are going to change the environment variable we added. Change the value from green to blue and save the new revision. You will see the new revision being deployed in the revisions portal.
 
 <img width="1197" alt="create blue revision" src="https://github.com/pjlewisuk/reddog-containerapps/assets/48108258/f0dd5c38-6f67-421c-bfb5-78406e6a49c9">
 
