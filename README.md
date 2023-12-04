@@ -45,16 +45,16 @@ Traefik is a leading reverse proxy and load balancer that integrates with your e
 
 ## Standard Deployment
 
-To deploy the Reddog services along with the necessary Azure Resources, clone this repo and run the following [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) commands. You will need an Azure subscription where you have permission to create a Resource Group (e.g. Contributor). Alternatively you may execute the [deploy.sh](./deploy.sh) script.
+To deploy the Reddog services along with the necessary Azure Resources, clone this repo and run the following [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) commands. You will need an Azure subscription where you have permission to create a Resource Group (e.g. Contributor). Alternatively you may execute the [deploy.sh](./deploy.sh) or [deploy.ps1](./deploy.ps1) script.
 
 > Please note that Container Apps is only available in [a subset of Azure regions](https://azure.microsoft.com/en-ca/explore/global-infrastructure/products-by-region/?products=container-apps). 
 
 
 ```bash
-# *nix only
-export RG="reddog"
-export LOCATION="westeurope"
-export SUB_ID="<YourSubscriptionID>"
+# *nix bash                            # Windows PowerShell
+export RG="reddog"                     # $RG="reddog"
+export LOCATION="westeurope"           # $LOCATION="westeurope"
+export SUB_ID="<YourSubscriptionID>"   # $SUB_ID="<YourSubscriptionID>"
 
 # Follow Azure CLI prompts to authenticate to the subscription of your choice
 az login
